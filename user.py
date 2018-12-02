@@ -21,14 +21,14 @@ class GeneralUser:
             "last_logout_datetime": None,
             "register_datetime": None,
             "permission": None,  # 权限 普通用户为0
-            "account_id": [],  # 账号ID列表索引
+            "role_id": [],  # 角色ID列表索引
         }
         self.uid = user_r.incr("user_id")
         self.login_info = {
             "uid": None,
             "passwd": None
         }
-        self.status = -1
+        self.status = 0
 
     def registering(self, id_card_number, real_name, sex, account_name, passwd, ip):
         """
@@ -49,17 +49,22 @@ class GeneralUser:
         self.user_info["ip"] = ip
         self.user_info['permission'] = 0
         self.user_info["register_datetime"] = now_datetime()
+        self.storage()
         return 0
 
     def storage(self):
-        wrt_dict_into_redisHM("user", self.uid, self.user_info)
-        return 0
+        """
+        save self.user_info to redis user db
+        """
+        return wrt_dict_into_redisHM("user", self.uid, self.user_info)
 
-    def login(self):
-        user_info = bdict2dict(user_r.hget('user', self.login_info['uid']))
+    def login(self, uid, passwd):
+        self.login_info['uid'] = uid
+        self.login_info['passwd'] = passwd
+        user_info = bdict2dict(user_r.hget('user', uid))
         if user_info is None:
             return -7
-        if user_info['passwd'] != self.login_info['passwd']:
+        if user_info['passwd'] != passwd:
             return -6
         else:
             self.status = 1
@@ -69,6 +74,7 @@ class GeneralUser:
             return 0
 
     def logout(self):
+        if self.status == 0: return -8
         self.status = 0
         self.user_info['last_logout_datetime'] = now_datetime()
         self.storage()
@@ -76,43 +82,50 @@ class GeneralUser:
         return 0
 
 
-def test():
+def test_registering():
     user1 = GeneralUser()
     user_r.set('user_id', 0)  # just for test
 
-    # flag = user1.registering(
-    #     id_card_number="220582197707198132",
-    #     real_name="小刚",
-    #     sex="男",
-    #     account_name="爱玩的小刚同学",
-    #     passwd="PASSWD",
-    #     ip="127.0.0.1"
-    # )
-    #
-    # cprint("registering: " + err_code[flag], 'red')
-    # if not flag:
-    #     cprint("storage: " + err_code[user1.storage()], color='red')
-    #
-    # cprint('debug user info:', 'green')
-    # print(user1.user_info)
+    flag = user1.registering(
+        id_card_number="220582197707198132",
+        real_name="小刚",
+        sex="男",
+        account_name="爱玩的小刚同学",
+        passwd="PASSWD",
+        ip="127.0.0.1"
+    )
 
-    user1.login_info['uid'] = 111
-    user1.login_info["passwd"] = 'PASSWD'
-    cprint("login: " + err_code[user1.login()], 'red')
-
-    user1.login_info['uid'] = 1
-    user1.login_info['passwd'] = 'passwd'
-    cprint('login: ' + err_code[user1.login()], 'red')
-
-    user1.login_info['uid'] = 1
-    user1.login_info['passwd'] = 'PASSWD'
-    cprint('login: ' + err_code[user1.login()], 'red')
+    cprint("registering: " + err_code[flag], 'red')
+    if not flag:  # 注册成功
+        cprint("storage: " + err_code[user1.storage()], color='red')
 
     cprint('debug user info:', 'green')
     print(user1.user_info)
 
+
+def test_login():
+    user1 = GeneralUser()
+    cprint("login: " + err_code[user1.login(uid=111, passwd='PASSWD')], 'red')
+
+    cprint('login: ' + err_code[user1.login(1, 'passwd')], 'red')
+
+    cprint('login: ' + err_code[user1.login(1, 'PASSWD')], 'red')
+
+    cprint('debug user info:', 'green')
+    print(user1.user_info)
+
+
+def test_logout():
+    user1 = GeneralUser()
+    cprint('logout: ' + err_code[user1.logout()], 'red')
+
+    user1.login(1, 'PASSWD')
     cprint('logout: ' + err_code[user1.logout()], 'red')
 
 
+def main():
+    pass
+
+
 if __name__ == "__main__":
-    test()
+    main()
