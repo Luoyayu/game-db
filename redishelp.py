@@ -1,21 +1,5 @@
 import redis, json, datetime
 
-err_code = {
-    0: "SUCCESS",
-    -1: "WRONG_ID_CARD_NUMBER",
-    -2: "TOO_LONG_REAL_NAME",
-    -3: "TOO_LONG_ACCOUNT_NAME",
-    -4: "WRONG_SEX",
-    -5: "WRONG_IPADDR",
-    -6: "WRONG_PASSWD",
-    -7: "ID_NOT_EXIST",
-    -8: "NOT_ONLINE",
-    -9: "",
-    -10: "",
-    -11: "",
-    -12: "",
-}
-
 now_datetime = lambda: datetime.datetime.now().__str__()
 
 

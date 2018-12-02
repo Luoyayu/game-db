@@ -53,3 +53,9 @@ def test_redis_List():
     r = redis.Redis(host='localhost', port=6379, db=0)
     r.delete('role')
     r.lpush('role', '1')
+
+
+def test_redis_Set():
+    r = redis.Redis(host='localhost', port=6379, db=0)
+    r.delete('account_name')
+

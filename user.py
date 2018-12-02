@@ -5,7 +5,7 @@ from termcolor import cprint
 from pyvalidators.idcard import is_valid_idcard
 from pyvalidators.ipaddr import IPAddrValidator
 
-user_r = redis.Redis(host='localhost', port=6379, db=0)  # user redis db
+r0 = redis.Redis(host='localhost', port=6379, db=0)  # user redis db
 
 
 class GeneralUser:
@@ -23,7 +23,7 @@ class GeneralUser:
             "permission": None,  # 权限 普通用户为0
             "role_id": [],  # 角色ID列表索引
         }
-        self.uid = user_r.incr("user_id")
+        self.uid = r0.incr("user_id")
         self.login_info = {
             "uid": None,
             "passwd": None
@@ -35,11 +35,15 @@ class GeneralUser:
         @参数: 身份证(str), 真实姓名(str), 性别(str), 账户名(str), 密码(str), IP(str)
         @功能: 完成用户字典建立
         """
-        if is_valid_idcard(str(id)): return -1
-        if len(real_name) > 6: return -2
-        if len(account_name) > 25: return -3
-        if sex not in ['男', '女', '保密']: return -4
-        if not IPAddrValidator.is_valid(str(ip)): return -5
+        if is_valid_idcard(str(id)): return "WRONG_ID_CARD_NUMBER"
+        if len(real_name) > 6: return "TOO_LONG_REAL_NAME"
+        if len(account_name) > 25: return "TOO_LONG_ACCOUNT_NAME"
+        if len(passwd) < 8: return "TOO_SHORT_PASSWD"
+        if sex not in ['男', '女', '保密']: return "WRONG_SEX"
+        if not IPAddrValidator.is_valid(str(ip)): return "WRONG_IPADDR"
+
+        if not r0.sadd('id_card_number_set', id_card_number): return "EXISTED_ID_CARD_NUMBER"
+        if not r0.sadd('account_name_set', account_name): return "EXISTED_ACCOUNT_NAME"
 
         self.user_info["id_card_number"] = id_card_number
         self.user_info["real_name"] = real_name
@@ -61,11 +65,11 @@ class GeneralUser:
     def login(self, uid, passwd):
         self.login_info['uid'] = uid
         self.login_info['passwd'] = passwd
-        user_info = bdict2dict(user_r.hget('user', uid))
+        user_info = bdict2dict(r0.hget('user', uid))
         if user_info is None:
-            return -7
+            return "ID_NOT_EXIST"
         if user_info['passwd'] != passwd:
-            return -6
+            return "WRONG_PASSWD"
         else:
             self.status = 1
             for key, value in user_info.items():
@@ -74,30 +78,30 @@ class GeneralUser:
             return 0
 
     def logout(self):
-        if self.status == 0: return -8
+        if self.status == 0: return "NOT_ONLINE"
         self.status = 0
         self.user_info['last_logout_datetime'] = now_datetime()
         self.storage()
-        user_r.save()  # save to disk
+        r0.save()  # save to disk
         return 0
 
 
 def test_registering():
     user1 = GeneralUser()
-    user_r.set('user_id', 0)  # just for test
+    r0.set('user_id', 0)  # just for test
 
-    flag = user1.registering(
+    flag = str(user1.registering(
         id_card_number="220582197707198132",
         real_name="小刚",
         sex="男",
         account_name="爱玩的小刚同学",
         passwd="PASSWD",
         ip="127.0.0.1"
-    )
+    ))
 
-    cprint("registering: " + err_code[flag], 'red')
+    cprint("registering: " + flag, 'red')
     if not flag:  # 注册成功
-        cprint("storage: " + err_code[user1.storage()], color='red')
+        cprint("storage: " + user1.storage(), color='red')
 
     cprint('debug user info:', 'green')
     print(user1.user_info)
@@ -105,11 +109,11 @@ def test_registering():
 
 def test_login():
     user1 = GeneralUser()
-    cprint("login: " + err_code[user1.login(uid=111, passwd='PASSWD')], 'red')
+    cprint("login: " + user1.login(uid=111, passwd='PASSWD'), 'red')
 
-    cprint('login: ' + err_code[user1.login(1, 'passwd')], 'red')
+    cprint('login: ' + user1.login(1, 'passwd'), 'red')
 
-    cprint('login: ' + err_code[user1.login(1, 'PASSWD')], 'red')
+    cprint('login: ' + user1.login(1, 'PASSWD'), 'red')
 
     cprint('debug user info:', 'green')
     print(user1.user_info)
@@ -117,10 +121,10 @@ def test_login():
 
 def test_logout():
     user1 = GeneralUser()
-    cprint('logout: ' + err_code[user1.logout()], 'red')
+    cprint('logout: ' + user1.logout(), 'red')
 
     user1.login(1, 'PASSWD')
-    cprint('logout: ' + err_code[user1.logout()], 'red')
+    cprint('logout: ' + user1.logout(), 'red')
 
 
 def main():
