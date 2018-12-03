@@ -14,14 +14,23 @@ class Role:
             'job': None,
             'server_part': None,
             'power': None,
-            'backpack_id': None,  # 背包ID
-            'pokemons': []  # 宝可梦ID列表
+            'backpack_id': None,  # 拥有的背包ID
+            'pokemons': []  # 拥有的宝可梦ID列表
         }
-        self.uid = None
-        self.rid = None
-        self.role_template_num = 0
+        self.uid = None  # 账号ID
+        self.rid = None  # 角色ID
+        self.role_template_num = 0  # 角色模板ID
 
     def create_role(self, uid, role_name, sex, job, server_part):
+        """
+        创建角色, 更新账号信息
+        :param uid: 账号ID
+        :param role_name: 角色名
+        :param sex: 性别 ['男', '女', '保密']
+        :param job: 职业 ['战士', '法师', '刺客']
+        :param server_part: 区服 ["华东", '华北', '华南', '华西']
+        :return:
+        """
         if len(role_name) > 20: return "TOO_LONG_ROLE_NAME"
         if job not in ['战士', '法师', '刺客']: return "WRONG_JOB"
         if server_part not in ["华东", '华北', '华南', '华西']: return "WRONG_SERVER_PART"
@@ -39,8 +48,8 @@ class Role:
         self.role_info['power'] = 0
         self.role_info['backpack_id'] = r0.incr('backpack_id')
 
-        user_info = bdict2dict(r0.hget('user', uid))
-        user_info['role_id'].append(self.rid)
+        user_info = get_redisHM_items_as_dict('user', uid)
+        user_info['role_id_list'].append(self.rid)
         wrt_dict_into_redisHM('user', uid, user_info)
 
         return self.storage()
@@ -48,5 +57,27 @@ class Role:
     def storage(self):
         """
         save self.role_info to redis role db
+        先填充role1.role_info !
         """
+        if self.rid is None:
+            return "NO_RID"
         return wrt_dict_into_redisHM("user", self.rid, self.role_info)
+
+    def load(self):
+        pass
+
+    def delete(self, rid=None):
+        """
+        删除角色信息, 更新账号信息
+        :return:
+        """
+        if rid is None:
+            if self.rid is None:
+                return "NO_RID"
+            else:
+                self.rid = rid
+        delete_redisHM_items('role', self.rid)
+        user_info = get_redisHM_items_as_dict('user', self.uid)
+        user_info['role_id_list'].pop(self.rid)
+        # FIXME: 删除宝可梦实例, 背包实例等
+        return wrt_dict_into_redisHM('user', self.uid, user_info)

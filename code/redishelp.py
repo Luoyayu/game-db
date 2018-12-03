@@ -38,6 +38,29 @@ def wrt_dict_into_redisHM(name, key, value, host='localhost', port=6379, db=0):
     return 0
 
 
-def show_redisHM(name, key, host='localhost', port=6379, db=0):
+def get_redisHM_items_as_dict(name, key, host='localhost', port=6379, db=0):
+    """
+    :param name:
+    :param key:
+    :param host:
+    :param port:
+    :param db:
+    :return: python dict
+    """
     r = redis.Redis(host=host, port=port, db=db)
-    return r.hget(name, key)
+    return bdict2dict(r.hget(name, key))
+
+
+def delete_redisHM_items(name, key, host='localhost', port=6379, db=0):
+    """
+    :param name:
+    :param key:
+    :param host:
+    :param port:
+    :param db:
+    :return: 删除成功返回0, 否则返回DELETE_ERROR
+    """
+    r = redis.Redis(host=host, port=port, db=db)
+    if r.hdel(name, key):
+        return 0
+    return "DELETE_ERROR"

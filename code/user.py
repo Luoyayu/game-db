@@ -21,14 +21,14 @@ class GeneralUser:
             "last_logout_datetime": None,
             "register_datetime": None,
             "permission": None,  # 权限 普通用户为0
-            "role_id": [],  # 角色ID列表索引
+            "role_id_list": [],  # 角色ID列表索引
+            "status": None  # 状态
         }
         self.uid = None
         self.login_info = {
             "uid": None,
             "passwd": None
         }
-        self.status = 0
 
     def registering(self, id_card_number, real_name, sex, account_name, passwd, ip):
         """
@@ -54,38 +54,94 @@ class GeneralUser:
         self.user_info["ip"] = ip
         self.user_info['permission'] = 0
         self.user_info["register_datetime"] = now_datetime()
+        self.user_info['status'] = 0
         self.storage()
         return 0
 
     def storage(self):
         """
         save self.user_info to redis user db
+        先填充user1.user_info !
         """
+        if self.uid is None:
+            return "NO_UID"
         return wrt_dict_into_redisHM("user", self.uid, self.user_info)
 
-    def login(self, uid, passwd):
+    def login(self, uid=None, passwd=None):
+        """
+        :param uid:
+        :param passwd:
+        如果登录参数为空, 将从user1.login_info中获得
+        user1.login(uid, passed)
+        或者先填充 user1.login_info['uid'], user1.login_info['passwd'] 调用user1.login()
+        :return:
+        """
+        uid = self.login_info['uid'] if uid is None else uid
+        passwd = self.login_info['passwd'] if uid is None else passwd
+        if uid in None or passwd is None: return "UID_OR_PASSWD_IS_NONE"
+
         self.login_info['uid'] = uid
         self.login_info['passwd'] = passwd
-        user_info = bdict2dict(r0.hget('user', uid))
+        user_info = get_redisHM_items_as_dict('user', uid)
+
         if user_info is None:
-            return "ID_NOT_EXIST"
+            return "UID_NOT_EXIST"
         if user_info['passwd'] != passwd:
             return "WRONG_PASSWD"
         else:
             self.uid = uid
-            self.status = 1
+            self.user_info['status'] = 1
             for key, value in user_info.items():
                 self.user_info[key] = value
             self.user_info['last_login_datetime'] = now_datetime()
             return 0
 
-    def logout(self):
-        if self.status == 0: return "NOT_ONLINE"
-        self.status = 0
+    def logout(self, uid=None):
+        """
+        登出, user1.logout(uid), 或者user1.logout()
+        :param uid:
+        :return:
+        """
+        if uid is None:
+            if self.uid is None:
+                return "NO_UID"
+            else:  # user1.logout(uid)
+                self.uid = uid
+                if not self.load():  # fill self.user_info
+                    return "UID_NOT_EXIST"
+
+        if self.user_info['status'] == 0: return "NOT_ONLINE"
+
+        self.user_info['status'] = 0
         self.user_info['last_logout_datetime'] = now_datetime()
         self.storage()
-        r0.save()  # save to disk
         return 0
+
+    def load(self, uid=None):
+        """
+        load user if uid not exist return error
+        :param uid:
+        :return:
+        """
+        if uid is None:
+            if self.uid is None:
+                return "NO_UID"
+            else:
+                self.uid = uid
+        user_info = get_redisHM_items_as_dict('user', self.uid)
+        if user_info is None:
+            return "UID_NOT_EXIST"
+        for key, value in user_info.items():
+            self.user_info[key] = value
+        return 0
+
+    # def delete(self, uid=None):
+    #     if uid is None:
+    #         if self.uid is None:
+    #             return "NO_UID"
+    #         else:
+    #             self.uid = uid
+    #     return delete_redisHM_items('user', self.uid)
 
 
 def test_registering():

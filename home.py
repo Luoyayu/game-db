@@ -29,6 +29,11 @@ def login():
         session['password'] = request.form['password']
         from user import GeneralUser
         user = GeneralUser()
+
+        # user.login_info['uid'] = session['username']
+        # user.login_info["passwd"] = session['password']
+        # user.login()
+
         flag = user.login(session['username'], session['password'])
         cprint("登录状况: {}".format(str(flag), 'red'))
         # print(session['username'], session['password'])
