@@ -34,6 +34,7 @@ def wrt_dict_into_redisHM(name, key, value, host='localhost', port=6379, db=0):
     """
     r = redis.Redis(host=host, port=port, db=db)
     r.hset(name, key, str(value))
+    r.save()
     return 0
 
 

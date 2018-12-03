@@ -69,11 +69,11 @@ class GeneralUser:
         if user_info is None:
             return "ID_NOT_EXIST"
         if user_info['passwd'] != passwd:
-            return "WRONG_PASSWD"
+            return "WRONG_PASSWD" 
         else:
             self.status = 1
             for key, value in user_info.items():
-                self.user_info[key] = user_info[key]
+                self.user_info[key] = value
             self.user_info['last_login_datetime'] = now_datetime()
             return 0
 
@@ -95,7 +95,7 @@ def test_registering():
         real_name="小刚",
         sex="男",
         account_name="爱玩的小刚同学",
-        passwd="PASSWD",
+        passwd="PASSWORD",
         ip="127.0.0.1"
     ))
 
@@ -109,11 +109,11 @@ def test_registering():
 
 def test_login():
     user1 = GeneralUser()
-    cprint("login: " + user1.login(uid=111, passwd='PASSWD'), 'red')
+    cprint("login: " + str(user1.login(uid=111, passwd='PASSWORD')), 'red')
 
-    cprint('login: ' + user1.login(1, 'passwd'), 'red')
+    cprint('login: ' + str(user1.login(1, 'password')), 'red')
 
-    cprint('login: ' + user1.login(1, 'PASSWD'), 'red')
+    cprint('login: ' + str(user1.login(1, 'PASSWORD')), 'red')
 
     cprint('debug user info:', 'green')
     print(user1.user_info)
@@ -121,10 +121,10 @@ def test_login():
 
 def test_logout():
     user1 = GeneralUser()
-    cprint('logout: ' + user1.logout(), 'red')
+    cprint('logout: ' + str(user1.logout()), 'red')
 
-    user1.login(1, 'PASSWD')
-    cprint('logout: ' + user1.logout(), 'red')
+    user1.login(1, 'PASSWORD')
+    cprint('logout: ' + str(user1.logout()), 'red')
 
 
 def main():
