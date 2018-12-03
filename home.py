@@ -1,7 +1,7 @@
 from flask import Flask, url_for, render_template, session, redirect, request, flash
 import os
 from termcolor import cprint
-from code.user import GeneralUser
+from gameflask.code.user import GeneralUser
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)

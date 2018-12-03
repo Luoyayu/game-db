@@ -1,4 +1,4 @@
-from redishelp import *
+from gameflask.code.redishelp import *
 
 r0 = redis.Redis(host='localhost', port=6379, db=0)  # user redis db
 

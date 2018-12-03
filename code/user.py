@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
-import random
-from redishelp import *
+from gameflask.code.redishelp import *
+
 from termcolor import cprint
 from pyvalidators.idcard import is_valid_idcard
 from pyvalidators.ipaddr import IPAddrValidator
@@ -78,7 +78,7 @@ class GeneralUser:
         """
         uid = self.login_info['uid'] if uid is None else uid
         passwd = self.login_info['passwd'] if uid is None else passwd
-        if uid in None or passwd is None: return "UID_OR_PASSWD_IS_NONE"
+        if uid is None or passwd is None: return "UID_OR_PASSWD_IS_NONE"
 
         self.login_info['uid'] = uid
         self.login_info['passwd'] = passwd
@@ -186,7 +186,7 @@ def test_logout():
 
 
 def main():
-    pass
+    print("hello")
 
 
 if __name__ == "__main__":
