@@ -1,6 +1,7 @@
 from flask import Flask, url_for, render_template, session, redirect, request, flash
 import os
 from termcolor import cprint
+from code.user import GeneralUser
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -27,7 +28,6 @@ def login():
     if request.method == 'POST':
         session['username'] = request.form['username']
         session['password'] = request.form['password']
-        from user import GeneralUser
         user = GeneralUser()
 
         # user.login_info['uid'] = session['username']
