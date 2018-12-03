@@ -1,5 +1,6 @@
 import redis
 import json
+from redishelp import *
 
 
 def bdict2dict(bdict, key=None):
@@ -59,3 +60,13 @@ def test_redis_Set():
     r = redis.Redis(host='localhost', port=6379, db=0)
     r.delete('account_name')
 
+
+def test():
+    r = redis.Redis(host='localhost', port=6379, db=0)
+    user = bdict2dict(r.hget('user', 1))
+    role_id = user['role_id']
+    # role_id.append(1)
+    # role_id.append(2)
+    # user = show_redisHM('user', 1)
+    print(type(role_id))
+    # wrt_dict_into_redisHM('user', 1, user)

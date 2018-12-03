@@ -23,7 +23,7 @@ class GeneralUser:
             "permission": None,  # 权限 普通用户为0
             "role_id": [],  # 角色ID列表索引
         }
-        self.uid = r0.incr("user_id")
+        self.uid = None
         self.login_info = {
             "uid": None,
             "passwd": None
@@ -45,6 +45,7 @@ class GeneralUser:
         if not r0.sadd('id_card_number_set', id_card_number): return "EXISTED_ID_CARD_NUMBER"
         if not r0.sadd('account_name_set', account_name): return "EXISTED_ACCOUNT_NAME"
 
+        self.uid = r0.incr("user_id")
         self.user_info["id_card_number"] = id_card_number
         self.user_info["real_name"] = real_name
         self.user_info["sex"] = sex
@@ -69,8 +70,9 @@ class GeneralUser:
         if user_info is None:
             return "ID_NOT_EXIST"
         if user_info['passwd'] != passwd:
-            return "WRONG_PASSWD" 
+            return "WRONG_PASSWD"
         else:
+            self.uid = uid
             self.status = 1
             for key, value in user_info.items():
                 self.user_info[key] = value
