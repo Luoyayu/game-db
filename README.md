@@ -13,3 +13,5 @@ print(sys.path)
 
 ```
 
+
+cd ./static/main && npm install
