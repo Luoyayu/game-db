@@ -10,104 +10,104 @@
     <link rel="stylesheet" href="/static/main/node_modules/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="/static/main/css/style.css">
     <!-- end 引用css -->
-    <link rel="shortcut icon" href="/static/main/images/favicon.png" />
+    <link rel="shortcut icon" href="/static/main/images/favicon.png"/>
 </head>
 
 <body>
-    <div class="body-wrapper">
-        <!-- partial:../../partials/_sidebar.html -->
-        {% include '/partials/_sidebar.html' %}
-        <!-- partial -->
-        <!-- partial:../../partials/_navbar.html -->
-        {% include '/partials/_navbar_search.html' %}
-        <!-- partial -->
+<div class="body-wrapper">
+    <!-- partial:../../partials/_sidebar.html -->
+    {% include '/partials/_sidebar.html' %}
+    <!-- partial -->
+    <!-- partial:../../partials/_navbar.html -->
+    {% include '/partials/_navbar_search.html' %}
+    <!-- partial -->
     <div class="page-wrapper mdc-toolbar-fixed-adjust">
-      <main class="content-wrapper">
-        <div class="mdc-layout-grid">
-          <div class="mdc-layout-grid__inner">
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-              <div class="mdc-card">
-								<section class="mdc-card__primary">
-									<h1 class="mdc-card__title mdc-card__title--large">Line chart</h1>
-								</section>
-								<section class="mdc-card__supporting-text">
-                  <canvas id="lineChart" style="height:250px"></canvas>
-								</section>
-							</div>
+        <main class="content-wrapper">
+            <div class="mdc-layout-grid">
+                <div class="mdc-layout-grid__inner">
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                        <div class="mdc-card">
+                            <section class="mdc-card__primary">
+                                <h1 class="mdc-card__title mdc-card__title--large">Line chart</h1>
+                            </section>
+                            <section class="mdc-card__supporting-text">
+                                <canvas id="lineChart" style="height:250px"></canvas>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                        <div class="mdc-card">
+                            <section class="mdc-card__primary">
+                                <h1 class="mdc-card__title mdc-card__title--large">Bar chart</h1>
+                            </section>
+                            <section class="mdc-card__supporting-text">
+                                <canvas id="barChart" style="height:230px"></canvas>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                        <div class="mdc-card">
+                            <section class="mdc-card__primary">
+                                <h1 class="mdc-card__title mdc-card__title--large">Area chart</h1>
+                            </section>
+                            <section class="mdc-card__supporting-text">
+                                <canvas id="areaChart" style="height:250px"></canvas>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                        <div class="mdc-card">
+                            <section class="mdc-card__primary">
+                                <h1 class="mdc-card__title mdc-card__title--large">Doughnut chart</h1>
+                            </section>
+                            <section class="mdc-card__supporting-text">
+                                <canvas id="doughnutChart" style="height:250px"></canvas>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                        <div class="mdc-card">
+                            <section class="mdc-card__primary">
+                                <h1 class="mdc-card__title mdc-card__title--large">Pie chart</h1>
+                            </section>
+                            <section class="mdc-card__supporting-text">
+                                <canvas id="pieChart" style="height:250px"></canvas>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                        <div class="mdc-card">
+                            <section class="mdc-card__primary">
+                                <h1 class="mdc-card__title mdc-card__title--large">Scatter chart</h1>
+                            </section>
+                            <section class="mdc-card__supporting-text">
+                                <canvas id="scatterChart" style="height:250px"></canvas>
+                            </section>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-              <div class="mdc-card">
-								<section class="mdc-card__primary">
-									<h1 class="mdc-card__title mdc-card__title--large">Bar chart</h1>
-								</section>
-								<section class="mdc-card__supporting-text">
-                  <canvas id="barChart" style="height:230px"></canvas>
-								</section>
-							</div>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-              <div class="mdc-card">
-								<section class="mdc-card__primary">
-									<h1 class="mdc-card__title mdc-card__title--large">Area chart</h1>
-								</section>
-								<section class="mdc-card__supporting-text">
-                  <canvas id="areaChart" style="height:250px"></canvas>
-								</section>
-							</div>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-              <div class="mdc-card">
-								<section class="mdc-card__primary">
-									<h1 class="mdc-card__title mdc-card__title--large">Doughnut chart</h1>
-								</section>
-								<section class="mdc-card__supporting-text">
-                  <canvas id="doughnutChart" style="height:250px"></canvas>
-								</section>
-							</div>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-              <div class="mdc-card">
-								<section class="mdc-card__primary">
-									<h1 class="mdc-card__title mdc-card__title--large">Pie chart</h1>
-								</section>
-								<section class="mdc-card__supporting-text">
-                  <canvas id="pieChart" style="height:250px"></canvas>
-								</section>
-							</div>
-            </div>
-            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-              <div class="mdc-card">
-								<section class="mdc-card__primary">
-									<h1 class="mdc-card__title mdc-card__title--large">Scatter chart</h1>
-								</section>
-								<section class="mdc-card__supporting-text">
-                  <canvas id="scatterChart" style="height:250px"></canvas>
-								</section>
-							</div>
-            </div>
-          </div>
-        </div>
-      </main>
+        </main>
 
     </div>
-  </div>
+</div>
 
 
-  <!-- body wrapper -->
-  <!-- plugins:js -->
-  <script src="../../node_modules/material-components-web/dist/material-components-web.min.js"></script>
-  <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-  <!-- endinject -->
-  <!-- Plugin js for this page-->
-  <script src="../../node_modules/chart.js/dist/Chart.min.js"></script>
-  <!-- End plugin js for this page-->
-  <!-- inject:js -->
-	<script src="../../js/misc.js"></script>
-	<script src="../../js/material.js"></script>
-	<!-- endinject -->
-  <!-- Custom js for this page-->
-  <script src="../../js/chart.js"></script>
-  <!-- End custom js for this page-->
+<!-- body wrapper -->
+<!-- plugins:js -->
+<script src="../../../static/main/node_modules/material-components-web/dist/material-components-web.min.js"></script>
+<script src="../../../static/main/node_modules/jquery/dist/jquery.min.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="../../../static/main/node_modules/chart.js/dist/Chart.min.js"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="../../../static/main/js/misc.js"></script>
+<script src="../../../static/main/js/material.js"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="../../../static/main/js/chart.js"></script>
+<!-- End custom js for this page-->
 </body>
 
 </html>
