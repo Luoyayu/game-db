@@ -3,11 +3,10 @@
 <head>
     <title>Login</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link href="/static/css/style.css" rel='stylesheet' type='text/css'/>
+    <link href="/static/index/css/style.css" rel='stylesheet' type='text/css'/>
 
     <!--web fonts-->
-    <link href='http://fonts.lug.ustc.edu.cn/css?family=PT+Sans:400,700,400italic,700italic|Oswald:400,300,700'
-          rel='stylesheet' type='text/css'>
+    <link href='http://fonts.lug.ustc.edu.cn/css?family=PT+Sans:400,700,400italic,700italic|Oswald:400,300,700' rel='stylesheet' type='text/css'>
     <link href='http://fonts.useso.com/css?family=Exo+2' rel='stylesheet' type='text/css'>
     <!--web fonts-->
     <script src="http://ajax.lug.ustc.edu.cn/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -35,18 +34,18 @@
     </div>
     <div class="clear"></div>
     <div class="avatar">
-        <img src="/static/images/avatar.png"/>
+        <img src="/static/index/images/avatar2.jpeg"/>
     </div>
 
     <!--传送表单-->
-    <form action="" method="post">
+    <form action="/login" method="post">
         <label>
-            <input type="text" name=username class="text" value="username" onfocus="this.value = '';"
+            <input type="text" name='username' class="text" value="username" onfocus="this.value = '';"
                    onblur="if (this.value === '') {this.value = 'username';}">
         </label>
         <div class="key">
             <label>
-                <input type="password" name=password value="password" onfocus="this.value = '';"
+                <input type="password" name='password' value="password" onfocus="this.value = '';"
                        onblur="if (this.value === '') {this.value = 'password';}">
             </label>
         </div>
