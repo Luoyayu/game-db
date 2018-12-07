@@ -1,6 +1,6 @@
 from gameflask.code.redishelp import *
 
-r0 = redis.Redis(host='localhost', port=6379, db=0)  # user redis db
+r0 = redis.Redis(host=host, port=port, db=0, password=RedisPasswd)  # user redis db
 
 
 class Role:
@@ -48,9 +48,9 @@ class Role:
         self.role_info['power'] = 0
         self.role_info['backpack_id'] = r0.incr('backpack_id')
 
-        user_info = get_redisHM_items_as_dict('user', uid)
+        user_info = get_redisHM_items_as_dict('user', uid, db=0)
         user_info['role_id_list'].append(self.rid)
-        wrt_dict_into_redisHM('user', uid, user_info)
+        wrt_dict_into_redisHM('user', uid, user_info, db=0)
 
         return self.storage()
 
@@ -61,10 +61,20 @@ class Role:
         """
         if self.rid is None:
             return "NO_RID"
-        return wrt_dict_into_redisHM("user", self.rid, self.role_info)
+        return wrt_dict_into_redisHM("user", self.rid, self.role_info, db=0)
 
-    def load(self):
-        pass
+    def load(self, rid=None):
+        if rid is None:
+            if self.rid is None:
+                return "NO_RID"
+        else:
+            self.rid = rid
+        role_info = get_redisHM_items_as_dict('role', rid, db=0)
+        if role_info is None:
+            return "WRONG_RID"
+        for key, value in role_info:
+            self.role_info[key] = value
+        return 0
 
     def delete(self, rid=None):
         """
@@ -76,8 +86,23 @@ class Role:
                 return "NO_RID"
             else:
                 self.rid = rid
-        delete_redisHM_items('role', self.rid)
-        user_info = get_redisHM_items_as_dict('user', self.uid)
-        user_info['role_id_list'].pop(self.rid)
+
+        if not delete_redisHM_items('role', self.rid, db=0):
+            return "WRONG_RID"
+
+        user_info = get_redisHM_items_as_dict('user', self.uid, db=0)
+        try:
+            user_info['role_id_list'].remove(self.rid)
+        except ValueError:
+            return "THE_USER_DONOT_HAVE_THIS_RID"
+
         # FIXME: 删除宝可梦实例, 背包实例等
-        return wrt_dict_into_redisHM('user', self.uid, user_info)
+        return wrt_dict_into_redisHM('user', self.uid, user_info, db=0)
+
+
+def test_create_role():
+    pass
+
+
+def test_delete():
+    pass

@@ -5,7 +5,7 @@ from termcolor import cprint
 from pyvalidators.idcard import is_valid_idcard
 from pyvalidators.ipaddr import IPAddrValidator
 
-r0 = redis.Redis(host='localhost', port=6379, db=0)  # user redis db
+r0 = redis.Redis(host=host, port=port, db=0, password=RedisPasswd)  # user redis db
 
 
 class GeneralUser:
@@ -65,7 +65,7 @@ class GeneralUser:
         """
         if self.uid is None:
             return "NO_UID"
-        return wrt_dict_into_redisHM("user", self.uid, self.user_info)
+        return wrt_dict_into_redisHM("user", self.uid, self.user_info, db=0)
 
     def login(self, uid=None, passwd=None):
         """
@@ -77,24 +77,23 @@ class GeneralUser:
         :return:
         """
         uid = self.login_info['uid'] if uid is None else uid
-        passwd = self.login_info['passwd'] if uid is None else passwd
-        if uid is None or passwd is None: return "UID_OR_PASSWD_IS_NONE"
+        passwd = self.login_info['passwd'] if passwd is None else passwd
+        if uid is None: return "UID_IS_NONE"
+        if passwd is None: return "PASSWD_IS_NONE"
 
         self.login_info['uid'] = uid
         self.login_info['passwd'] = passwd
-        user_info = get_redisHM_items_as_dict('user', uid)
+        user_info = get_redisHM_items_as_dict('user', uid, db=0)
 
-        if user_info is None:
-            return "UID_NOT_EXIST"
-        if user_info['passwd'] != passwd:
-            return "WRONG_PASSWD"
-        else:
-            self.uid = uid
-            self.user_info['status'] = 1
-            for key, value in user_info.items():
-                self.user_info[key] = value
-            self.user_info['last_login_datetime'] = now_datetime()
-            return 0
+        if user_info is None: return "UID_NOT_EXIST"
+        if user_info['passwd'] != passwd: return "WRONG_PASSWD"
+
+        self.uid = uid
+        for key, value in user_info.items():
+            self.user_info[key] = value
+        self.user_info['last_login_datetime'] = now_datetime()
+        self.user_info['status'] = 1
+        return self.storage()
 
     def logout(self, uid=None):
         """
@@ -102,20 +101,17 @@ class GeneralUser:
         :param uid:
         :return:
         """
-        if uid is None:
-            if self.uid is None:
-                return "NO_UID"
-            else:  # user1.logout(uid)
-                self.uid = uid
-                if not self.load():  # fill self.user_info
-                    return "UID_NOT_EXIST"
-
+        if uid is None and self.uid is None:
+            return "NO_UID"
+        else:
+            self.uid = self.uid if uid is None else uid
+            if self.load():  # fill self.user_info
+                return "UID_NOT_EXIST"
         if self.user_info['status'] == 0: return "NOT_ONLINE"
 
         self.user_info['status'] = 0
         self.user_info['last_logout_datetime'] = now_datetime()
-        self.storage()
-        return 0
+        return self.storage()
 
     def load(self, uid=None):
         """
@@ -123,18 +119,17 @@ class GeneralUser:
         :param uid:
         :return:
         """
-        if uid is None:
-            if self.uid is None:
-                return "NO_UID"
-            else:
-                self.uid = uid
-        user_info = get_redisHM_items_as_dict('user', self.uid)
+        if uid is None and self.uid is None:
+            return "NO_UID"
+        self.uid = self.uid if uid is None else uid
+        user_info = get_redisHM_items_as_dict(name='user', key=self.uid, db=0)
         if user_info is None:
             return "UID_NOT_EXIST"
         for key, value in user_info.items():
             self.user_info[key] = value
         return 0
 
+    # TODO DELETE USER
     # def delete(self, uid=None):
     #     if uid is None:
     #         if self.uid is None:
@@ -148,46 +143,117 @@ def test_registering():
     user1 = GeneralUser()
     r0.set('user_id', 0)  # just for test
 
-    flag = str(user1.registering(
+    r0.delete('id_card_number_set')  # # just for test
+    r0.delete('account_name_set')  # # just for test
+
+    flag = user1.registering(
         id_card_number="220582197707198132",
         real_name="小刚",
         sex="男",
         account_name="爱玩的小刚同学",
         passwd="PASSWORD",
         ip="127.0.0.1"
-    ))
-
-    cprint("registering: " + flag, 'red')
+    )
+    assert flag == 0, 'registering failed'
+    cprint("registering: " + str(flag), 'red')
     if not flag:  # 注册成功
-        cprint("storage: " + user1.storage(), color='red')
+        flag = user1.storage()
+        assert flag == 0, 'storage failed'
+        cprint("storage: " + str(flag), color='red')
+
+    flag = user1.registering(
+        id_card_number="220582197707198132",
+        real_name="小盟",
+        sex="男",
+        account_name="爱玩的小盟同学",
+        passwd="PASSWORD",
+        ip="127.0.0.1"
+    )
+    assert flag == "EXISTED_ID_CARD_NUMBER"
+    cprint("registering: " + str(flag), 'red')
+
+    flag = user1.registering(
+        id_card_number="220582197707198133",
+        real_name="小盟",
+        sex="男",
+        account_name="爱玩的小刚同学",
+        passwd="PASSWORD",
+        ip="127.0.0.1"
+    )
+    assert flag == "EXISTED_ACCOUNT_NAME"
+    cprint("registering: " + str(flag), 'red')
 
     cprint('debug user info:', 'green')
-    print(user1.user_info)
+    dprint(user1.user_info)
 
 
 def test_login():
+    # unittest
     user1 = GeneralUser()
-    cprint("login: " + str(user1.login(uid=111, passwd='PASSWORD')), 'red')
 
-    cprint('login: ' + str(user1.login(1, 'password')), 'red')
+    flag = user1.login(uid=111, passwd='PASSWORD')
+    assert flag == "UID_NOT_EXIST"
+    dprint(user1.login_info)
+    cprint("login1: " + str(flag), 'red')
 
-    cprint('login: ' + str(user1.login(1, 'PASSWORD')), 'red')
+    flag = user1.login(1, 'password')
+    assert flag == "WRONG_PASSWD"
+    dprint(user1.login_info)
+    cprint('login1: ' + str(flag), 'red')
+
+    flag = user1.login(1, 'PASSWORD')
+    assert flag == 0
+    dprint(user1.login_info)
+    cprint('login1: ' + str(flag), 'red')
+
+    user2 = GeneralUser()
+
+    user2.login_info['uid'] = 1
+    user2.login_info['passwd'] = 'PASSWORD'
+
+    flag = user2.login()
+    assert flag == 0
+    dprint(user1.login_info)
+    cprint('login2: ' + str(flag), 'red')
+
+    user3 = GeneralUser()
+
+    flag = user3.login()
+    assert flag == 'UID_IS_NONE'
+    dprint(user3.login_info)
+    cprint('login3: ' + str(flag), 'red')
+
+    user3.login_info['uid'] = 1
+
+    flag = user3.login()
+    assert flag == 'PASSWD_IS_NONE'
+    dprint(user3.login_info)
+    cprint('login3: ' + str(flag), 'red')
 
     cprint('debug user info:', 'green')
-    print(user1.user_info)
+    dprint(user1.user_info)
 
 
 def test_logout():
     user1 = GeneralUser()
     cprint('logout: ' + str(user1.logout()), 'red')
 
-    user1.login(1, 'PASSWORD')
-    cprint('logout: ' + str(user1.logout()), 'red')
+    flag = user1.login(1, 'PASSWORD')
+    assert flag == 0
+
+    flag = user1.logout()
+    assert flag == 0
+    assert user1.user_info['status'] == 0
+
+    cprint('logout: ' + str(flag), 'red')
+
+    dprint(user1.user_info)
 
 
 def main():
-    print("hello")
+    cprint("begin test", 'blue')
 
 
 if __name__ == "__main__":
     main()
+    cprint('test over', 'blue')
