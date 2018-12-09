@@ -3,6 +3,7 @@ import json
 import datetime
 import random
 import pprint
+from termcolor import cprint
 
 # redis setting
 # =======================
@@ -76,6 +77,10 @@ def delete_redisHM_items(name, key, db, host=host, port=port, password=RedisPass
     :return: 删除成功返回0, 否则返回DELETE_ERROR
     """
     r = redis.Redis(host=host, port=port, db=db, password=password)
-    if r.hdel(name, key):
+    try:
+        r.hdel(name, key)
+    except redis.exceptions.DataError as e:
+        print(e)
+        return "DELETE_ERROR"
+    else:
         return 0
-    return "DELETE_ERROR"

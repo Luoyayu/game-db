@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 from gameflask.code.redishelp import *
 
-from termcolor import cprint
 from pyvalidators.idcard import is_valid_idcard
 from pyvalidators.ipaddr import IPAddrValidator
 
@@ -130,6 +129,7 @@ class GeneralUser:
         return 0
 
     # TODO DELETE USER
+
     # def delete(self, uid=None):
     #     if uid is None:
     #         if self.uid is None:
@@ -250,10 +250,10 @@ def test_logout():
     dprint(user1.user_info)
 
 
-def main():
+def test_main():
     cprint("begin test", 'blue')
+    user1 = GeneralUser()
 
 
 if __name__ == "__main__":
-    main()
     cprint('test over', 'blue')
