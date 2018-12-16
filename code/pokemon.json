@@ -1,0 +1,26 @@
+[
+  {
+    "name": "妙蛙种子",
+    "type": [
+      "草",
+      "毒"
+    ],
+    "main_abilities": "茂盛",
+    "vice_abilities": "叶绿素",
+    "height": 0.7,
+    "weight": 6.9,
+    "HP": 45,
+    "attack": 49,
+    "defense": 49,
+    "SpAtk": 65,
+    "SpDef": 65,
+    "speed": 45,
+    "catch_rate": 45,
+    "friendship": 70,
+    "growth_rate": "Medium Slow",
+    "ev_yield": "1 SpAtk",
+    "egg_groups": "Grass,Monster",
+    "gender": "87.5% male, 12.5% female",
+    "egg_cycles": 20
+  }
+]

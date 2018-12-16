@@ -88,11 +88,11 @@ class Role:
         else:
             self.rid = rid
 
-        if rid is None:
-            if self.rid is None:
+        if uid is None:
+            if self.uid is None:
                 return "NO_UID"
         else:
-            self.rid = uid
+            self.uid = uid
 
         if delete_redisHM_items('role', self.rid, db=0):
             return "WRONG_RID"
