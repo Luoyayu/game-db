@@ -73,8 +73,9 @@ class Role:
         role_info = get_redisHM_items_as_dict('role', rid, db=0)
         if role_info is None:
             return "WRONG_RID"
-        for key, value in role_info:
-            self.role_info[key] = value
+        for key in role_info.keys():
+            self.role_info[key] = role_info[key]
+
         return 0
 
     def delete(self, uid=None, rid=None):
@@ -108,7 +109,7 @@ class Role:
 
 
 def test_create_role():
-    r0.delete('role')  # just for test
+    r0.delete('role')  # just for test, in a new hm
     r0.delete("role_id")
     r0.delete("backpack_id")
 

@@ -78,9 +78,9 @@ def delete_redisHM_items(name, key, db, host=host, port=port, password=RedisPass
     """
     r = redis.Redis(host=host, port=port, db=db, password=password)
     try:
-        r.hdel(name, key)
+        flag = r.hdel(name, key)
     except redis.exceptions.DataError as e:
         print(e)
         return "DELETE_ERROR"
     else:
-        return 0
+        return not flag  # if del succ flag be 1+
