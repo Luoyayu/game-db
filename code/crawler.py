@@ -5,8 +5,7 @@ import requests
 
 # https://img.pokemondb.net/artwork/+pokemon_name(小写)
 
-def craw(name):
-    name = name  # natu
+def craw_pokemon(name):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
     }
@@ -47,6 +46,7 @@ def craw(name):
     Egg_Groups_cnt = 0
     Egg_cycles_cnt = 0
     Abilities_cnt = 0
+
     for tbody in soup.find_all('tbody'):
         for th in tbody.children:
             if isinstance(th, bs4.element.NavigableString):
@@ -222,4 +222,79 @@ def craw(name):
     # print("saved")
     return 0
 
-# craw("Pikachu")
+
+def craw_move(name):
+    Type = ""
+    Category = ""
+    Power = 0
+    Accuracy = None
+    PP = 0
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+    }
+    source = requests.get("https://pokemondb.net/move/" + name, headers=headers)
+    # print(source.status_code)
+    if source.status_code == 404:
+        return "MOVE_NOT_EXISTED"
+    soup = BeautifulSoup(source.text, "html.parser")
+    # print(soup.prettify())
+    # exit()
+
+    for tbody in soup.find_all('tbody'):
+        for th in tbody.children:
+            if isinstance(th, bs4.element.NavigableString):
+                continue
+            for ch in th.children:
+                if isinstance(ch, bs4.element.NavigableString):
+                    continue
+                # print(ch)
+
+                if ch.string == "Type":
+                    Type = ch.next_sibling.next_sibling.string
+
+                elif ch.string == "Category":
+                    for s in ch.next_sibling.next_sibling.strings:
+                        Category = s.strip()
+                        break
+                elif ch.string == "Power":
+                    try:
+                        Power = int(ch.next_sibling.next_sibling.string)
+                    except ValueError:
+                        Power = None
+                elif ch.string == "Accuracy":
+                    try:
+                        Accuracy = int(ch.next_sibling.next_sibling.string)
+                    except ValueError:
+                        Accuracy = None
+                        if "∞" == ch.next_sibling.next_sibling.string:
+                            Accuracy = "∞"
+                elif ch.string == 'PP':
+                    for s in ch.next_sibling.next_sibling.strings:
+                        PP = int(s)
+                        break
+    # print("招式名", name)
+    # print('类型', Type)
+    # print('分类', Category)
+    # print('威力', Power)
+    # print('命中', Accuracy)
+    # print('pp值', PP)
+    move = {
+        "name": name,
+        "type": Type,
+        "category": Category,
+        "power": Power,
+        "accuracy": Accuracy,
+        "pp": PP
+    }
+
+    import json
+    with open("move.json", "w") as f:
+        json.dump(move, f)
+    # print("saved")
+    return 0
+
+
+if __name__ == '__main__':
+    pass
+    # craw_move("brick-break")

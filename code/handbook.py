@@ -1,6 +1,6 @@
 import gameflask.code.redishelp
 from redishelp import *
-from crawler import craw
+from crawler import craw_pokemon, craw_move
 
 r0 = redis.Redis(host=host, port=port, db=0, password=RedisPasswd)  # user redis db0
 
@@ -41,12 +41,12 @@ class handbook:
             "name": None,
             "type": None,
             "power": None,
-            "acc": None,
+            "accuracy": None,
             "pp": None
         }
 
     def craw_pokemon(self, pokemon_name):
-        flag = craw(pokemon_name)
+        flag = craw_pokemon(pokemon_name)
         if flag == 0:
             with open("pokemon.json", 'r') as f:
                 crawed_pokemon = json.load(f)
@@ -55,6 +55,10 @@ class handbook:
                 self.pokemon[key] = crawed_pokemon[key]
         else:
             print("WRONG_POKEMON_NAME", pokemon_name)
+        for move in self.pokemon['moves']:
+            move = move.replace(' ', '-').replace(',', '')
+            craw_move(move)
+            self.storage_move()
 
     def load_pokemon(self, pokemon_id):
         pokemon_info = get_redisHM_items_as_dict('handbook_pokemon', pokemon_id, db=0)
@@ -66,7 +70,10 @@ class handbook:
 
     def storage_pokemon(self, pokemon_id=None):
         if pokemon_id is None:
-            pokemon_id = r0.incr("handbook_pokemon_idx")
+            pokemon_id = r0.hget("handbook_pokemon_name_id", self.pokemon['name'])
+            if pokemon_id is None:
+                pokemon_id = r0.incr("handbook_pokemon_idx")
+
         r0.hset('handbook_pokemon_name_id', self.pokemon['name'], pokemon_id)
         wrt_dict_into_redisHM('handbook_pokemon', pokemon_id, self.pokemon, db=0)
 
@@ -98,6 +105,17 @@ class handbook:
     def search_pokemon_by_id(self, pokemon_id):
         self.load_pokemon(pokemon_id)
         return pokemon_id
+
+    def craw_move(self, move_name):
+        flag = craw_move(move_name)
+        if flag == 0:
+            with open("move.json", 'r') as f:
+                crawed_move = json.load(f)
+
+            for key in crawed_move.keys():
+                self.pokemon[key] = crawed_move[key]
+        else:
+            print("WRONG_POKEMON_NAME", move_name)
 
     def load_move(self, move_id):
         move_info = get_redisHM_items_as_dict("handbook_move", move_id, db=0)
@@ -209,7 +227,13 @@ def test_craw_and_save(name):
     handbook0.storage_pokemon()
 
 
-if __name__ == '__main__':
+def test_pokemon():
+    handbook0 = handbook()
+    handbook0.load_pokemon(80)
+    dprint(handbook0.pokemon)
+
+
+def test_craw_100_pokemon():
     l_ti = ti()
     r0.delete("handbook_pokemon")
     r0.delete("handbook_pokemon_name_id")
@@ -223,3 +247,8 @@ if __name__ == '__main__':
             test_craw_and_save(name)
 
     print("finish, {}s".format(ti() - l_ti))
+
+
+if __name__ == '__main__':
+    pass
+    # test_pokemon()
