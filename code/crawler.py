@@ -2,114 +2,224 @@ import bs4
 from bs4 import BeautifulSoup
 import requests
 
-source = requests.get("https://pokemondb.net/pokedex/abra")
-soup = BeautifulSoup(source.text, "html.parser")
 
-Type = []
-Height = 0
-Weight = 0
-main_Abilities = ""
-vice_Abilities = ""
-HP = 0
-ATK = 0
-defense = 0
-SpATK = 0
-SpDef = 0
-speed = 0
-catch_rate = 0
-friendship = 0
-growth_rate = ""
-ev_yield = ""
-egg_groups = ""
-gender = ""
-egg_cycles = 0
+# https://img.pokemondb.net/artwork/+pokemon_name(小写)
 
-# print(soup.prettify())
-for tbody in soup.find_all('tbody'):
-    for th in tbody.children:
-        if isinstance(th, bs4.element.NavigableString):
-            continue
-        # print(th)
-        # print(type(th))
-        for ch in th.children:
+def craw(name):
+    name = name  # natu
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+    }
+    source = requests.get("https://pokemondb.net/pokedex/" + name, headers=headers)
+    # print(source.status_code)
+    if source.status_code == 404:
+        return "NAME_NOT_EXISTED"
+    soup = BeautifulSoup(source.text, "html.parser")
 
-            if isinstance(ch, bs4.element.NavigableString):
+    Type = []
+    moves = []
+    Local = 0
+    Species = ""
+    Height = 0
+    Weight = 0
+    main_Abilities = ""
+    vice_Abilities = ""
+    HP = 0
+    ATK = 0
+    defense = 0
+    SpATK = 0
+    SpDef = 0
+    speed = 0
+
+    catch_rate = 0
+    friendship = 0
+    base_exp = 0
+    growth_rate = ""
+    ev_yield = ""
+    egg_groups = ""
+    gender = ""
+    egg_cycles = 0
+
+    # print(soup.prettify())
+    # exit()
+
+    Type_cnt = 0
+    Egg_Groups_cnt = 0
+    Egg_cycles_cnt = 0
+    Abilities_cnt = 0
+    for tbody in soup.find_all('tbody'):
+        for th in tbody.children:
+            if isinstance(th, bs4.element.NavigableString):
                 continue
-            # print(ch)
-            if ch.string == "Type":
-                # print("IN Type!!!!!!!!")
-                # print(ch.next_sibling.next_sibling.contents[1].string)
-                # print(ch.next_sibling.next_sibling.contents[3].string)
+            # print(th)
+            # print(type(th))
+            for ch in th.children:
+                if isinstance(ch, bs4.element.NavigableString):
+                    continue
+                # print(ch.string)
 
-                Type.append(ch.next_sibling.next_sibling.contents[1].string)
                 try:
-                    Type.append(ch.next_sibling.next_sibling.contents[3].string)
-                except IndexError:
-                    pass
+                    rawString = ch.next_sibling.next_sibling.string
+                except AttributeError:
+                    rawString = None
 
-            if ch.string == "Height":
-                rawString = ch.next_sibling.next_sibling.string
-                # print(rawString)
-                st = ch.next_sibling.next_sibling.string.find(' ')
-                try:
-                    # print(float(rawString[st + 2: len(rawString) - 3]))
-                    Height = float(rawString[st + 2: len(rawString) - 3])
-                except ValueError as e:
-                    print(e)
-                    exit("!")
+                if ch.string == "Type" and Type_cnt == 0:
+                    Type_cnt += 1
+                    Type.append(ch.next_sibling.next_sibling.contents[1].string)
+                    try:
+                        Type.append(ch.next_sibling.next_sibling.contents[3].string)
+                    except IndexError:
+                        pass
 
-            if ch.string == "Weight":
-                rawString = ch.next_sibling.next_sibling.string
-                # print(rawString)
-                st = ch.next_sibling.next_sibling.string.find(' ')
-                try:
-                    # print(float(rawString[st + 2: len(rawString) - 3]))
-                    Weight = float(rawString[st + 2: len(rawString) - 3])
-                except ValueError as e:
-                    print(e)
-                    exit("!")
+                elif ch.string == "Species":
+                    Species = rawString
 
-            if ch.string == "Abilities":
-                rawString = ch.next_sibling.next_sibling
-                spanas = rawString.span.a
-                cnt = 0
-                for s in spanas.strings:
-                    if cnt == 0: main_Abilities = s;
-                    if cnt == 1: vice_Abilities = s;
-                    cnt += 1
-                    if cnt >= 2: break
+                elif ch.string == "Height":
+                    st = rawString.find(' ')
+                    try:
+                        Height = float(rawString[st + 2: len(rawString) - 3])
+                    except ValueError as e:
+                        print(e)
 
-            if ch.string == "HP":
-                rawString = ch.next_sibling.next_sibling
-                HP = rawString.string
+                elif ch.string == "Weight":
+                    st = rawString.find('(')
+                    try:
+                        Weight = float(rawString[st + 1: len(rawString) - 3])
+                    except ValueError as e:
+                        print(e)
 
-            if ch.string == 'Attack':
-                rawString = ch.next_sibling.next_sibling
-                SpATK = rawString.string
+                elif ch.string == "Abilities" and Abilities_cnt == 0:
+                    Abilities_cnt = 1
+                    rawString = ch.next_sibling.next_sibling
+                    cnt, lst = 0, ''
+                    for s in rawString.strings:
+                        if lst == '1' and cnt == 0:
+                            main_Abilities = s
+                            cnt = 1
+                        if lst == '2' and cnt == 1:
+                            vice_Abilities = s
+                            break
+                        if s[0].isdigit() and lst == s[0]:
+                            break
+                        elif s[0].isdigit():
+                            lst = s[0]
 
-            if ch.string == 'Defense':
-                rawString = ch.next_sibling.next_sibling
-                defense = rawString.string
+                elif ch.string == "HP":
+                    HP = int(rawString)
 
-            if ch.string == "Sp. Atk":
-                rawString = ch.next_sibling.next_sibling
-                SpATK = rawString.string
+                elif ch.string == 'Attack':
+                    ATK = int(rawString)
 
-            if ch.string == 'Sp. Def':
-                rawString = ch.next_sibling.next_sibling
-                SpDef = rawString.string
+                elif ch.string == 'Defense':
+                    defense = int(rawString)
 
-            if ch.string == "Speed":
-                rawString = ch.next_sibling.next_sibling
-                speed = rawString.string
+                elif ch.string == "Sp. Atk":
+                    SpATK = int(rawString)
 
-            if ch.string == ""
+                elif ch.string == 'Sp. Def':
+                    SpDef = int(rawString)
 
-print(Type)
-print(Height)
-print(Weight)
-print("主属性 ", main_Abilities)
-print('副属性 ', vice_Abilities)
-print(HP)
-print(SpATK)
-print("\n")
+                elif ch.string == "Speed":
+                    speed = int(rawString)
+
+                elif ch.string == "Catch rate":
+                    rawString = ch.next_sibling.next_sibling
+                    catch_rate = int(rawString.contents[0])
+
+                elif ch.a and ch.a.string == "Friendship":
+                    try:
+                        friendship = int(ch.next_sibling.next_sibling.contents[0])
+                    except ValueError:
+                        friendship = None
+
+                elif ch.string == "Base Exp.":
+                    base_exp = int(rawString)
+
+                elif ch.string == "Growth Rate":
+                    growth_rate = rawString
+
+                elif ch.string == "Gender":
+                    rawString = ch.next_sibling.next_sibling
+                    gender = rawString.contents[0].string
+
+                elif ch.string == "EV yield":
+                    ev_yield = rawString.strip()
+
+                elif ch.string == "Egg Groups" and Egg_Groups_cnt == 0:
+                    for s in ch.next_sibling.next_sibling.strings:
+                        if s == '\n': continue
+                        egg_groups += s
+
+
+                elif ch.a and ch.a.string == "Egg cycles" and Egg_cycles_cnt == 0:
+                    Egg_cycles_cnt += 1
+                    egg_cycles = int(ch.next_sibling.next_sibling.contents[0])
+
+                elif ch.string == "Local №":
+                    Local = int(ch.next_sibling.next_sibling.contents[0].string)
+
+    import re
+
+    for x in soup.find_all(href=re.compile("/move/.")):
+        moves.append(x.string)
+        if len(moves) == 5: break
+
+    #
+    # print('姓名', name)
+    # print('类型', Type)
+    # print("物种", Species)
+    # print('身高', Height)
+    # print('体重', Weight)
+    # print("主属性 ", main_Abilities)
+    # print('副属性 ', vice_Abilities)
+    # print('HP', HP)
+    # print('ATK', ATK)
+    # print('defense', defense)
+    # print('SpATK', SpATK)
+    # print('SpDef', SpDef)
+    # print('speed', speed)
+    #
+    # print('catch_rate', catch_rate)
+    # print('friendship', friendship)
+    # print('base_exp', base_exp)
+    # print('growth_rate', growth_rate)
+    # print('ev_yield', ev_yield)
+    # print('egg_groups', egg_groups)
+    # print('gender', gender)
+    # print('egg_cycles', egg_cycles)
+    # print("Local", Local)
+    # print('move', moves)
+    # print("\n")
+
+    pokemon = {
+        "name": name,  # 姓名
+        "type": Type,  # 类型
+        "species": Species,  # 物种
+        "height": Height,  # 身高
+        "weight": Weight,  # 体重
+        "main_ability": main_Abilities,  # 主属性
+        "vice_ability": vice_Abilities,  # 副属性
+        "HP": HP,  # 生命值
+        "Atk": ATK,  # 攻击值
+        "Def": defense,  # 防御值
+        "spAtk": SpATK,  # 特攻值
+        "spDef": SpDef,  # 特防值
+        "Speed": speed,  # 速度
+        "catch_rate": catch_rate,  # 捕获率
+        "friendship": friendship,  # 友谊值
+        "base_exp": base_exp,  # 基础经验值
+        "growth_rate": growth_rate,  # 成长率
+        "ev_yield": ev_yield,
+        "egg_groups": egg_groups,  # 蛋组
+        "egg_cycles": egg_cycles,  # 蛋群周期
+        "gender": gender,  # 性别分布
+        "location": Local,  # 可捕获位置
+        "moves": moves  # 招式
+    }
+    import json
+    with open("pokemon.json", "w") as f:
+        json.dump(pokemon, f)
+    # print("saved")
+    return 0
+
+# craw("Pikachu")

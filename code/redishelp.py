@@ -3,6 +3,7 @@ import json
 import datetime
 import random
 import pprint
+import time
 from termcolor import cprint
 
 # redis setting
@@ -14,6 +15,7 @@ port = 2345
 
 now_datetime = lambda: datetime.datetime.now().__str__()
 dprint = lambda dict: pprint.PrettyPrinter(indent=4).pprint(dict)
+ti = lambda: time.time()
 
 
 def bdict2dict(bdict, key=None):
