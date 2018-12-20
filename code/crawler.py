@@ -5,7 +5,7 @@ import requests
 
 # https://img.pokemondb.net/artwork/+pokemon_name(小写)
 
-def craw_pokemon(name):
+def Craw_pokemon(name):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
     }
@@ -162,7 +162,7 @@ def craw_pokemon(name):
 
     for x in soup.find_all(href=re.compile("/move/.")):
         moves.append(x.string)
-        if len(moves) == 5: break
+        if len(moves) == 4: break
 
     #
     # print('姓名', name)
@@ -223,7 +223,7 @@ def craw_pokemon(name):
     return 0
 
 
-def craw_move(name):
+def Craw_move(name):
     Type = ""
     Category = ""
     Power = 0
@@ -296,5 +296,4 @@ def craw_move(name):
 
 
 if __name__ == '__main__':
-    pass
-    # craw_move("brick-break")
+    Craw_move("Tackle")
