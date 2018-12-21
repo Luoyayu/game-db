@@ -45,7 +45,7 @@ class handbook:
             "pp": None
         }
 
-    def craw_pokemon(self, pokemon_name):
+    def craw_pokemon(self, pokemon_name, with_move=0):
         flag = Craw_pokemon(pokemon_name)
         if flag == 0:
             with open("pokemon.json", 'r') as f:
@@ -55,12 +55,13 @@ class handbook:
                 self.pokemon[key] = crawed_pokemon[key]
         else:
             print("WRONG_POKEMON_NAME", pokemon_name)
-        for move in self.pokemon['moves']:
-            move = move.replace(' ', '-').replace(',', '')
-            print("craw", move)
-            self.craw_move(move)
-            # print(self.move)
-            self.storage_move()
+        if with_move:
+            for move in self.pokemon['moves']:
+                move = move.replace(' ', '-').replace(',', '')
+                print("craw", move)
+                self.craw_move(move)
+                # print(self.move)
+                self.storage_move()
 
     def load_pokemon(self, pokemon_id):
         pokemon_info = get_redisHM_items_as_dict('handbook_pokemon', pokemon_id, db=0)
@@ -83,10 +84,25 @@ class handbook:
         r0.hset('handbook_pokemon_name_id', self.pokemon['name'], pokemon_id)
         wrt_dict_into_redisHM('handbook_pokemon', pokemon_id, self.pokemon, db=0)
 
+        for typ in self.pokemon['type']:
+            lst = r0.get("handbook_pokemon_" + typ)
+            if lst is None:
+                lst = []
+            else:
+                lst = eval(lst)
+            lst.append(pokemon_id)
+            lst = list(set(lst))
+            r0.set("handbook_pokemon_" + typ, str(lst))
+
     def get_pokemon_id_by_name(self, name):
         pokemon_id = r0.hget("handbook_pokemon_name_id", name)
         if pokemon_id is None: return None
         return int(pokemon_id)
+
+    def get_all_pokemon_by_type_name(self, type_name):
+        lst = r0.get("handbook_pokemon_" + type_name)
+        if lst is None: return None
+        return eval(lst)
 
     def del_pokemon_by_name(self, name):
         pokemon_id = self.get_pokemon_id_by_name(name)
@@ -257,12 +273,27 @@ def test_craw_100_pokemon():
             print("{} ready for {}".format(cnt, name))
             cnt += 1
             test_craw_and_save(name)
+            # if cnt == 20: break
 
     print("finish, {}s".format(ti() - l_ti))
 
 
+def test_search_pokemon_by_type():
+    hd = handbook()
+    print(hd.get_all_pokemon_by_type_name("Flyin"))
+    print(hd.get_all_pokemon_by_type_name("Flying"))
+    print(hd.get_all_pokemon_by_type_name("Grass"))
+
+
 if __name__ == '__main__':
-    test_craw_100_pokemon()
+    # test_craw_100_pokemon()
+    test_search_pokemon_by_type()
     # hd = handbook()
     # print(hd.get_all_pokemon())
     # test_pokemon()
+    # print(str([1, 2, 3, 4]))
+    # r0.set("test", str([1, 2, 3, 4]))
+
+    # test = r0.get("test1")
+    # print(test)
+    # print(eval(test)[0])
