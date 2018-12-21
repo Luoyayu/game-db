@@ -199,12 +199,12 @@ def Craw_pokemon(name):
         "weight": Weight,  # 体重
         "main_ability": main_Abilities,  # 主属性
         "vice_ability": vice_Abilities,  # 副属性
-        "HP": HP,  # 生命值
-        "Atk": ATK,  # 攻击值
-        "Def": defense,  # 防御值
-        "spAtk": SpATK,  # 特攻值
-        "spDef": SpDef,  # 特防值
-        "Speed": speed,  # 速度
+        "hp": HP,  # 生命值
+        "atk": ATK,  # 攻击值
+        "def": defense,  # 防御值
+        "spatk": SpATK,  # 特攻值
+        "spdef": SpDef,  # 特防值
+        "speed": speed,  # 速度
         "catch_rate": catch_rate,  # 捕获率
         "friendship": friendship,  # 友谊值
         "base_exp": base_exp,  # 基础经验值
@@ -280,12 +280,12 @@ def Craw_move(name):
     # print('命中', Accuracy)
     # print('pp值', PP)
     move = {
-        "name": name,
-        "type": Type,
-        "category": Category,
-        "power": Power,
-        "accuracy": Accuracy,
-        "pp": PP
+        "name": name.replace('-', ' '),  # 招式名
+        "type": Type,  # 类型
+        "category": Category,  # 分类
+        "power": Power,  # 威力
+        "accuracy": Accuracy,  # 命中,
+        "pp": PP  # PP 值
     }
 
     import json

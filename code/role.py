@@ -6,7 +6,7 @@ r0 = redis.Redis(host=host, port=port, db=0, password=RedisPasswd)  # user redis
 class Role:
     def __init__(self):
         self.role_info = {
-            'role_name': None,
+            'name': None,
             'exp': None,
             'lv': None,
             'sex': None,
@@ -39,7 +39,7 @@ class Role:
         self.uid = uid
         self.rid = r0.incr('role_id')
 
-        self.role_info['role_name'] = role_name
+        self.role_info['name'] = role_name
         self.role_info['exp'] = 0
         self.role_info['lv'] = 0
         self.role_info['sex'] = sex

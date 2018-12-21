@@ -16,12 +16,12 @@ class handbook:
             'height': None,
             'weight': None,
 
-            'HP': None,
-            'Atk': None,
-            'Def': None,
-            'SpAtk': None,
-            'SpDef': None,
-            'Speed': None,
+            'hp': None,
+            'atk': None,
+            'def': None,
+            'spatk': None,
+            'spdef': None,
+            'speed': None,
 
             'catch_rate': None,
             'friendship': None,
@@ -55,12 +55,12 @@ class handbook:
                 self.pokemon[key] = crawed_pokemon[key]
         else:
             print("WRONG_POKEMON_NAME", pokemon_name)
-        # for move in self.pokemon['moves']:
-        #     move = move.replace(' ', '-').replace(',', '')
-        #     print("craw", move)
-        #     self.craw_move(move)
-        #     # print(self.move)
-        #     self.storage_move()
+        for move in self.pokemon['moves']:
+            move = move.replace(' ', '-').replace(',', '')
+            print("craw", move)
+            self.craw_move(move)
+            # print(self.move)
+            self.storage_move()
 
     def load_pokemon(self, pokemon_id):
         pokemon_info = get_redisHM_items_as_dict('handbook_pokemon', pokemon_id, db=0)
@@ -262,7 +262,7 @@ def test_craw_100_pokemon():
 
 
 if __name__ == '__main__':
-    # test_craw_100_pokemon()
-    hd = handbook()
-    print(hd.get_all_pokemon())
+    test_craw_100_pokemon()
+    # hd = handbook()
+    # print(hd.get_all_pokemon())
     # test_pokemon()
