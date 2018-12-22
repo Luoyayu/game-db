@@ -15,7 +15,8 @@ class Role:
             'server_part': None,
             'power': None,
             'backpack_id': None,  # 拥有的背包ID
-            'pokemons': []  # 拥有的宝可梦ID列表
+            'pokemons': [],  # 拥有的宝可梦ID列表
+            'present': []  # 表示战斗时上场的pokemon，最多为6个
         }
         self.uid = None  # 账号ID
         self.rid = None  # 角色ID
@@ -99,13 +100,46 @@ class Role:
             return "WRONG_RID"
 
         user_info = get_redisHM_items_as_dict('user', self.uid, db=0)
+        if user_info is None: return "WRONG_USER_ID"
         try:
             user_info['role_id_list'].remove(self.rid)
         except ValueError:
-            return "THE_USER_DONOT_HAVE_THIS_RID"
+            return "THE_USER_DO_NOT_HAVE_THIS_RID"
 
         # FIXME: 删除宝可梦实例, 背包实例等
         return wrt_dict_into_redisHM('user', self.uid, user_info, db=0)
+
+    def select_pokemon(self, rid, pokemon_id):
+        """
+        :param rid:
+        :param pokemon_id: 为想要上场的pokemon id
+        :return:
+        """
+        if not self.load(rid):
+            if len(self.role_info['present']) > 6:
+                return "PRESENT_POKEMON_IS_FULL"
+            else:
+                self.role_info['present'].append(pokemon_id)
+                self.role_info['present'] = list(set(self.role_info['present']))
+            return wrt_dict_into_redisHM('role', self.rid, self.role_info, db=0)
+        else:
+            return "WRONG_RID"
+
+    def exit_pokemon(self, rid, pokemon_id):
+        """
+        # 在上场的pokemon列表中输入被替换下场的pokemon id
+        :param rid:
+        :param pokemon_id:
+        :return:
+        """
+        if not self.load(rid):
+            try:
+                self.role_info['present'].remove(pokemon_id)
+            except ValueError:
+                return "POKEMON_NOT_EXISTED"
+            return wrt_dict_into_redisHM('role', self.rid, self.role_info, db=1)
+        else:
+            return "WRONG_RID"
 
 
 def test_create_role():
