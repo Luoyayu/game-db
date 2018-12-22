@@ -45,6 +45,16 @@ class handbook:
             "pp": None
         }
 
+        self.equipment = {
+            'name': None,
+            'atk': None,
+            'def': None,
+            'spatk': None,
+            'spdef': None,
+            'lv': None,
+            'type': None
+        }
+
     def craw_pokemon(self, pokemon_name, with_move=0):
         flag = Craw_pokemon(pokemon_name)
         if flag == 0:
@@ -80,7 +90,7 @@ class handbook:
             pokemon_id = r0.hget("handbook_pokemon_name_id", self.pokemon['name'])
             if pokemon_id is None:
                 pokemon_id = r0.incr("handbook_pokemon_idx")
-
+        if self.pokemon['name'] is None: return "POKEMON_INFO_NOT_COMPLETED"
         r0.hset('handbook_pokemon_name_id', self.pokemon['name'], pokemon_id)
         wrt_dict_into_redisHM('handbook_pokemon', pokemon_id, self.pokemon, db=0)
 
@@ -100,6 +110,7 @@ class handbook:
         return int(pokemon_id)
 
     def get_all_pokemon_by_type_name(self, type_name):
+        type_name = type_name.capitalize()
         lst = r0.get("handbook_pokemon_" + type_name)
         if lst is None: return None
         return eval(lst)
@@ -156,6 +167,7 @@ class handbook:
             move_id = r0.hget("handbook_move_name_id", self.move['name'])
             if move_id is None:
                 move_id = r0.incr("handbook_move_idx")
+        if self.move['name'] is None: return "MOVE_INFO_NOT_COMPLETED"
         r0.hset('handbook_move_name_id', self.move['name'], move_id)
         wrt_dict_into_redisHM('handbook_move', move_id, self.move, db=0)
 
@@ -187,6 +199,55 @@ class handbook:
     def search_move_by_id(self, move_id):
         self.load_move(move_id)
         return 0
+
+    def load_equipment(self, eid):
+        equipment_info = get_redisHM_items_as_dict("handbook_equipment", eid, db=0)
+        if equipment_info is None: return "WRONG_EID"
+        for key in equipment_info.keys():
+            self.equipment[key] = equipment_info[key]
+        return 0
+
+    def get_all_equipment(self):
+        blist = r0.hkeys("handbook_equipment")
+        return [int(x) for x in blist]
+
+    def storage_equipment(self, eid=None):
+        if eid is None:
+            eid = r0.hget("handbook_equipment_name_id", self.equipment['name'])
+            if eid is None:
+                eid = r0.incr("handbook_equipment_idx")
+        if self.equipment['name'] is None: return "EQUIPMENT_INFO_NOT_COMPLETED"
+        r0.hset('handbook_equipment_name_id', self.equipment['name'], eid)
+        wrt_dict_into_redisHM('handbook_equipment', eid, self.equipment, db=0)
+
+    def get_equipment_id_by_name(self, name):
+        eid = r0.hget("handbook_equipment_name_id", name)
+        if eid is None: return None
+        return int(eid)
+
+    def search_equipment_by_name(self, ename):
+        eid = self.get_equipment_id_by_name(ename)
+        if eid is None: return "WRONG_EQUIPMENT_NAME"
+        self.load_equipment(eid)
+        return eid
+
+    def search_equipment_by_id(self, eid):
+        self.load_equipment(eid)
+        return 0
+
+    def del_equipment_by_name(self, ename):
+        eid = self.get_equipment_id_by_name(ename)
+        if eid is None: return "WRONG_EQUIPMENT_NAME"
+        r0.hdel("handbook_equipment", eid)
+        r0.hdel("handbook_equipment_name_id", ename)
+        r0.save()
+
+    def del_equipment_by_id(self, eid):
+        equipment_info = get_redisHM_items_as_dict("handbook_equipment", eid, db=0)
+        if equipment_info is None: return "WRONG_EQUIPMENT_ID"
+        r0.hdel("handbook_equipment", eid)
+        r0.hdel("handbook_equipment_name_id", equipment_info['name'])
+        r0.save()
 
 
 def test_handbook_pokemon():
@@ -282,12 +343,25 @@ def test_search_pokemon_by_type():
     hd = handbook()
     print(hd.get_all_pokemon_by_type_name("Flyin"))
     print(hd.get_all_pokemon_by_type_name("Flying"))
-    print(hd.get_all_pokemon_by_type_name("Grass"))
+    print(hd.get_all_pokemon_by_type_name("grass"))
+    print(hd.get_all_pokemon_by_type_name("water"))
+
+
+def test_create_equipment():
+    r0.delete("handbook_equipment_idx")
+    hd = handbook()
+    f = open("equipments.json", 'r', encoding='utf-8')
+    equipmentList = json.load(f)
+    # print(equipmentList)
+    for e in equipmentList:
+        hd.equipment = e
+        hd.storage_equipment()
 
 
 if __name__ == '__main__':
+    test_create_equipment()
     # test_craw_100_pokemon()
-    test_search_pokemon_by_type()
+    # test_search_pokemon_by_type()
     # hd = handbook()
     # print(hd.get_all_pokemon())
     # test_pokemon()
