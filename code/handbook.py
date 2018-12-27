@@ -54,6 +54,10 @@ class handbook:
             'lv': None,
             'type': None
         }
+        self.item = {
+            'name': None,
+            'description': None,
+        }
 
     def craw_pokemon(self, pokemon_name, with_move=0):
         flag = Craw_pokemon(pokemon_name)

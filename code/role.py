@@ -16,7 +16,8 @@ class Role:
             'power': None,
             'backpack_id': None,  # 拥有的背包ID
             'pokemons': [],  # 拥有的宝可梦ID列表
-            'present': []  # 表示战斗时上场的pokemon，最多为6个
+            'present': [],  # 表示战斗时上场的pokemon，最多为6个
+            'money': None
         }
         self.uid = None  # 账号ID
         self.rid = None  # 角色ID
@@ -48,7 +49,8 @@ class Role:
         self.role_info['job'] = job
         self.role_info['server_part'] = server_part
         self.role_info['power'] = 0
-        self.role_info['backpack_id'] = r0.incr('backpack_id')
+        self.role_info['backpack_id'] = r0.incr('backpack_idx')
+        self.role_info['money'] = 1000
 
         user_info = get_redisHM_items_as_dict('user', uid, db=0)
         user_info['role_id_list'].append(self.rid)
