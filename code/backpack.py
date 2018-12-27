@@ -61,7 +61,7 @@ class Backpack:
     def add_item(self, bp_id, item_id):
         if not self.load(bp_id):
             for i, item in enumerate(self.backpack['item_lst']):
-                if item[0] == item_id:  # [[item_idx, num], ...]
+                if item[0] == item_id:  # [[item_idx, owner], ...]
                     self.backpack['item_lst'][i][1] += 1
                     self.backpack['usage'] += 1
                     return self.storage(bp_id)
@@ -69,14 +69,10 @@ class Backpack:
             return self.storage(bp_id)
         return "WRONG_bp_id"
 
-    def add_equipment(self, bp_id, eid):
+    def add_equipment(self, bp_id, eid):  # [[1, 2]] 1eq owner is 2
         if not self.load(bp_id):
-            for i, equipment in enumerate(self.backpack['equipment_lst']):
-                if equipment is not None and equipment[0] == eid:
-                    self.backpack['equipment_lst'][i][1] += 1
-                    self.backpack['usage'] += 1
-                    return self.storage(bp_id)
-            self.backpack['equipment_lst'].append([eid, 1])
+            self.backpack['equipment_lst'].append([eid, -1])
+            self.backpack['usage'] += 1
             return self.storage(bp_id)
         return "WRONG_bp_id"
 
@@ -103,14 +99,11 @@ class Backpack:
         flag = 0
         if not self.load(bp_id):
             try:
-                for i, item in enumerate(self.backpack['equipment_lst']):
-                    if item[0] == eid:
+                for eq in self.backpack['equipment_lst']:
+                    if eq[0] == eid:
+                        self.backpack['equipment_lst'].remove(eq)
                         flag = 1
-                        self.backpack['equipment_lst'][i][1] -= 1
                         self.backpack['usage'] -= 1
-                        if self.backpack['equipment_lst'][i][1] == 0:
-                            self.backpack['equipment_lst'].remove([eid, 0])
-                            return self.storage(bp_id)
             except ValueError:
                 return "EQUIPMENT_ID_NOT_EXIST"
             if flag == 0:
@@ -129,25 +122,25 @@ def test_equipment():
     print('backpack id is', bp_id)
 
     bp.add_equipment(bp_id=bp_id, eid=1)
-    print(bp.show_equipment_lst(bp_id))  # [[1, 1]]
+    print(bp.show_equipment_lst(bp_id))  # [1, -1]
 
-    bp.add_equipment(bp_id=bp_id, eid=1)  # [[1, 2]]
+    bp.add_equipment(bp_id=bp_id, eid=1)  # [[1, -1], [1, -1]]
     print(bp.show_equipment_lst(bp_id))
 
-    bp.add_equipment(bp_id=bp_id, eid=2)  # [[1, 2], [2, 1]]
+    bp.add_equipment(bp_id=bp_id, eid=2)  # [[1, -1], [1, -1], [2, -1]]
     print(bp.show_equipment_lst(bp_id))
 
     bp.del_equipment(bp_id, 1)
-    print(bp.show_equipment_lst(bp_id))  # [1, 1], [2, 1]]
+    print(bp.show_equipment_lst(bp_id))  # [[1, -1], [2, -1]]
 
     bp.del_equipment(bp_id, 1)
-    print(bp.show_equipment_lst(bp_id))  # [[2, 1]]
+    print(bp.show_equipment_lst(bp_id))  # [[2, -1]]
 
-    bp.del_equipment(bp_id, 1)
-    print(bp.show_equipment_lst(bp_id))  # [[2, 1]]
+    print(bp.del_equipment(bp_id, 1))  # EQUIPMENT_ID_NOT_EXIST
+    print(bp.show_equipment_lst(bp_id))  # [[2, -1]]
 
-    hd.load_equipment(eid=2)
-    dprint(hd.equipment)
+    # hd.load_equipment(eid=2)
+    # dprint(hd.equipment)
 
 
 def test_item():
@@ -200,4 +193,4 @@ def init_item():
 
 
 if __name__ == '__main__':
-    pass
+    test_equipment()

@@ -139,7 +139,7 @@ class Role:
                 self.role_info['present'].remove(pokemon_id)
             except ValueError:
                 return "POKEMON_NOT_EXISTED"
-            return wrt_dict_into_redisHM('role', self.rid, self.role_info, db=1)
+            return wrt_dict_into_redisHM('role', self.rid, self.role_info, db=0)
         else:
             return "WRONG_RID"
 

@@ -1,6 +1,8 @@
 from gameflask.code.redishelp import *
+from gameflask.code.handbook import handbook
+from gameflask.code.backpack import Backpack
 
-r1 = redis.Redis(host=host, port=port, db=1, password=RedisPasswd)  # user redis db1
+r1 = redis.Redis(host=host, port=port, db=0, password=RedisPasswd)  # user redis db1
 
 
 class Pokemon:
@@ -18,6 +20,7 @@ class Pokemon:
             'weight': None,
 
             'hp': None,
+            'maxhp': None,
             'atk': None,
             'def': None,
             'spatk': None,
@@ -54,18 +57,19 @@ class Pokemon:
         for key in hd.pokemon.keys():
             self.pokemon_info[key] = hd.pokemon[key]
         self.pokemon_info['lv'] = 0
+        self.pokemon_info['maxhp'] = self.pokemon_info['hp']
         self.pokemon_info['exp'] = self.pokemon_info['base_exp']
-        role_info = get_redisHM_items_as_dict('role', rid, db=1)
+        role_info = get_redisHM_items_as_dict('role', rid, db=0)
         if role_info is None: return "WRONG_RID"
         role_info['pokemons'].append(self.pokemon_id)
-        wrt_dict_into_redisHM('role', rid, role_info, db=1)
+        wrt_dict_into_redisHM('role', rid, role_info, db=0)
 
         return self.storage()
 
     def storage(self):
         if self.pokemon_id is None:
             return "NO_POKEMON_ID"
-        return wrt_dict_into_redisHM("pokemon", self.pokemon_id, self.pokemon_info, db=1)
+        return wrt_dict_into_redisHM("pokemon", self.pokemon_id, self.pokemon_info, db=0)
 
     def load(self, pokemon_id=None):
         if pokemon_id is None:
@@ -73,7 +77,7 @@ class Pokemon:
                 return "NO_POKEMON_ID"
         else:
             self.pokemon_id = pokemon_id
-        pokemon_info = get_redisHM_items_as_dict('pokemon', pokemon_id, db=1)
+        pokemon_info = get_redisHM_items_as_dict('pokemon', pokemon_id, db=0)
         if pokemon_info is None:
             return "WRONG_POKEMON_ID"
         for key in pokemon_info:
@@ -97,10 +101,10 @@ class Pokemon:
         else:
             self.rid = rid
 
-        if delete_redisHM_items('pokemon', self.pokemon_id, db=1):
+        if delete_redisHM_items('pokemon', self.pokemon_id, db=0):
             return "WRONG_POKEMON_ID"
 
-        role_info = get_redisHM_items_as_dict('role', rid, db=1)
+        role_info = get_redisHM_items_as_dict('role', rid, db=0)
         if role_info is None: return "WRONG_RID"
 
         try:
@@ -108,19 +112,53 @@ class Pokemon:
         except ValueError:
             return "THE_ROLE_DO_NOT_HAVE_THIS_POKEMON_ID"
 
-        return wrt_dict_into_redisHM('role', rid, role_info, db=1)
+        return wrt_dict_into_redisHM('role', rid, role_info, db=0)
 
     def equip(self, eid):
         self.pokemon_info['equipment'].append(eid)
         return self.storage()
 
+    def unequip(self, bp_id, eid):
+        if eid in self.pokemon_info['equipment']:
+            self.pokemon_info['equipment'].remove(eid)
+        else:
+            return "POKEMON DON'T HAS THIS EQUIPMENT"
+
+        bk1 = Backpack()
+        bk1.load(bp_id)
+        for eq in bk1.backpack['equipment_lst']:
+            if eid == eq[0] and self.pokemon_id == eq[1]:
+                eq[1] = -1
+        return bk1.storage() + self.storage()
+
+    def use_item(self, bp_id, item_id):
+        bk1 = Backpack()
+        if not bk1.load(bp_id):
+            # [[1, 11], [2, 20]]
+            for item in bk1.backpack['item_lst']:
+                if item[0] == item_id:
+                    if item[1] > 0:
+                        bk1.del_item(bp_id, item_id)
+                        if item_id == 1:
+                            self.pokemon_info['hp'] += 20
+                        elif item_id == 2:
+                            self.pokemon_info['hp'] += 50
+
+                        self.pokemon_info['hp'] = self.pokemon_info['maxhp'] \
+                            if self.pokemon_info['hp'] > self.pokemon_info['maxhp'] \
+                            else self.pokemon_info['hp']
+                    else:
+                        return "ITEM_IS_EMPTY"
+                return bk1.storage(bp_id) + self.storage()
+        else:
+            return "WRONG_bp_id"
+
     def get_power(self, name=None):
-        from gameflask.code.handbook import handbook
         hd = handbook()
         if name is None:
             power = self.pokemon_info['atk']
             for equipment in self.pokemon_info['equipment']:
-                hd.search_equipment_by_id(equipment)
+                hd.load_equipment_by_id(equipment)
                 power += hd.equipment['atk']
             return power
 
@@ -131,7 +169,7 @@ class Pokemon:
             else:
                 power = hd.move["power"] * 2
                 for equipment in self.pokemon_info['equipment']:
-                    hd.search_equipment_by_id(equipment)
+                    hd.load_equipment_by_id(equipment)
                     power += hd.equipment['atk']
                 return power
 
@@ -152,7 +190,6 @@ def test_create_pokemon(id):
     # r1.delete("pokemon_id")
 
     pokemon1 = Pokemon()
-
     flag = pokemon1.create_pokemon(rid=1, pokemon_id=id)
     assert flag == 0
     cprint("create_pokemon: " + str(flag), 'red')

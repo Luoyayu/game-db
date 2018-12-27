@@ -1,6 +1,6 @@
 import gameflask.code.redishelp
-from redishelp import *
-from crawler import Craw_pokemon, Craw_move
+from gameflask.code.redishelp import *
+from gameflask.code.crawler import Craw_pokemon, Craw_move
 
 r0 = redis.Redis(host=host, port=port, db=0, password=RedisPasswd)  # user redis db0
 
@@ -229,13 +229,13 @@ class handbook:
         if eid is None: return None
         return int(eid)
 
-    def search_equipment_by_name(self, ename):
+    def load_equipment_by_name(self, ename):
         eid = self.get_equipment_id_by_name(ename)
         if eid is None: return "WRONG_EQUIPMENT_NAME"
         self.load_equipment(eid)
         return eid
 
-    def search_equipment_by_id(self, eid):
+    def load_equipment_by_id(self, eid):
         self.load_equipment(eid)
         return 0
 
