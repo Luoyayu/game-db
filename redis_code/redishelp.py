@@ -54,7 +54,7 @@ def wrt_dict_into_redisHM(name, key, value, db, host=host, port=port, password=R
     return 0
 
 
-def get_redisHM_items_as_dict(name, key, db, host=host, port=port, password=RedisPasswd):
+def get_redisHM_entry_as_dict(name, key, db, host=host, port=port, password=RedisPasswd):
     """
     :param password:
     :param name:

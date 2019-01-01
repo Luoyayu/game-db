@@ -1,6 +1,4 @@
-import redis
-import json
-from redishelp import *
+from gameflask.redis_code.redishelp import *
 
 
 def bdict2dict(bdict, key=None):

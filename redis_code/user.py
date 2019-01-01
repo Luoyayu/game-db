@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from gameflask.code.redishelp import *
+from gameflask.redis_code.redishelp import *
 
 from pyvalidators.idcard import is_valid_idcard
 from pyvalidators.ipaddr import IPAddrValidator
@@ -82,7 +82,7 @@ class GeneralUser:
 
         self.login_info['uid'] = uid
         self.login_info['passwd'] = passwd
-        user_info = get_redisHM_items_as_dict('user', uid, db=0)
+        user_info = get_redisHM_entry_as_dict('user', uid, db=0)
 
         if user_info is None: return "UID_NOT_EXIST"
         if user_info['passwd'] != passwd: return "WRONG_PASSWD"
@@ -121,7 +121,7 @@ class GeneralUser:
         if uid is None and self.uid is None:
             return "NO_UID"
         self.uid = self.uid if uid is None else uid
-        user_info = get_redisHM_items_as_dict(name='user', key=self.uid, db=0)
+        user_info = get_redisHM_entry_as_dict(name='user', key=self.uid, db=0)
         if user_info is None:
             return "UID_NOT_EXIST"
         for key, value in user_info.items():

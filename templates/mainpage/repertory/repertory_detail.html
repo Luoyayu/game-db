@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>repertory_detail</title>
+    <!-- 引用css -->
+    <link rel="stylesheet" href="/static/main/node_modules/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/main/css/style.css">
+    <!-- end 引用css -->
+    <link rel="shortcut icon" href="/static/main/images/favicon.png"/>
+</head>
+
+<body>
+<div class="body-wrapper">
+    <!-- partial:../../partials/_sidebar.html -->
+    {% include '/partials/_sidebar.html' %}
+    <!-- partial -->
+    <!-- partial:../../partials/_navbar.html -->
+    {% include '/partials/_navbar.html' %}
+    <!-- partial -->
+    <div class="page-wrapper mdc-toolbar-fixed-adjust">
+        <main class="content-wrapper">
+            <div class="mdc-layout-grid">
+                <div class="mdc-layout-grid__inner">
+          			<!--搜索条件-->
+          			<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+              			<div class="mdc-card">
+                            <section class="mdc-card__supporting-text">
+                                <img  height="400px" width="360px" src={{url}}>
+
+                                <h1 class="mdc-typography--headline">{{one_pokemon.name}}</h1>
+                                <p class="bold-text">宝可梦类型：{{one_pokemon.type}}</p>
+                                <p class="bold-text">宝可梦物种：{{one_pokemon.species}}</p>
+
+                                <p class="bold-text">宝可梦等级：{{one_pokemon.lv}}</p>
+                                <p class="bold-text">宝可梦经验：{{one_pokemon.exp}}</p>
+
+                                {% for equipment in equipments %}
+                                <p class="bold-text">宝可梦装备：{{equipment.name}}</p>
+                                <a href="/main/equipment_down?eq_id={{equipment.id}}&poke_id={{poke_id}}"><button type="button">卸下</button></a>
+                                {% endfor %}
+
+                                <form method="post" action="/main/equipment_up?poke_id={{poke_id}}">
+                                    <select name="eq_id">
+                                        {% for empty_equipment in empty_equipments %}
+                                        <option name="eq_id" value="{{empty_equipment.id}}">{{empty_equipment.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit">装备</button>
+                                </form>
+
+                                <p class="bold-text">宝可梦主要特性：{{one_pokemon.main_ability}}</p>
+                                <p class="bold-text">宝可梦次要特性：{{one_pokemon.vice_ability}}</p>
+                                <p class="bold-text">宝可梦身高：{{one_pokemon.height}}</p>
+                                <p class="bold-text">宝可梦重量：{{one_pokemon.weight}}</p>
+
+                                <p class="mdc-theme--primary text">属性值</p>
+                                <p class="bold-text">宝可梦血量：{{one_pokemon.hp}}</p>
+                                <p class="bold-text">宝可梦攻击：{{one_pokemon.atk}}</p>
+                                <p class="bold-text">宝可梦防御：{{one_pokemon.def}}</p>
+                                <p class="bold-text">宝可梦特攻：{{one_pokemon.spatk}}</p>
+                                <p class="bold-text">宝可梦特防：{{one_pokemon.spdef}}</p>
+                                <p class="bold-text">宝可梦速度：{{one_pokemon.speed}}</p>
+
+                                <p class="mdc-theme--primary text">其余信息</p>
+                                <p class="bold-text">宝可梦捕获概率：{{one_pokemon.catch_rate}}</p>
+                                <p class="bold-text">宝可梦亲密度：{{one_pokemon.friendship}}</p>
+                                <p class="bold-text">宝可梦初始经验：{{one_pokemon.base_exp}}</p>
+                                <p class="bold-text">宝可梦成长速率：{{one_pokemon.growth_rate}}</p>
+                                <p class="bold-text">宝可梦蛋群：{{one_pokemon.egg_groups}}</p>
+                                <p class="bold-text">宝可梦蛋孵化速度：{{one_pokemon.egg_cycles}}</p>
+                                <p class="bold-text">宝可梦性别分布：{{one_pokemon.gender}}</p>
+                                <p class="bold-text">宝可梦出现位置：{{one_pokemon.location}}</p>
+
+					            {% for move in moves %}
+                                <p class="bold-text">宝可梦招式：{{move}}</p>
+					            {% endfor %}
+
+                            </section>
+                        </div>
+            		</div>
+      			  </div>
+            </div>
+        </main>
+
+    </div>
+</div>
+
+
+<!-- body wrapper -->
+<!-- plugins:js -->
+<script src="../../../static/main/node_modules/material-components-web/dist/material-components-web.min.js"></script>
+<script src="../../../static/main/node_modules/jquery/dist/jquery.min.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="../../../static/main/node_modules/chart.js/dist/Chart.min.js"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="../../../static/main/js/misc.js"></script>
+<script src="../../../static/main/js/material.js"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="../../../static/main/js/chart.js"></script>
+<!-- End custom js for this page-->
+</body>
+
+</html>

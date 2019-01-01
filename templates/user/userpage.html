@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>tool</title>
+    <!-- 引用css -->
+    <link rel="stylesheet" href="/static/main/node_modules/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/main/css/style.css">
+
+    <link rel="stylesheet" href="/static/mypage/css/pokemon.css">
+    <!-- end 引用css -->
+    <link rel="shortcut icon" href="/static/main/images/favicon.png"/>
+</head>
+
+<body>
+<div class="body-wrapper">
+    <!-- partial:../../partials/_sidebar.html -->
+    {% include '/partials/_sidebar.html' %}
+    <!-- partial -->
+    <!-- partial:../../partials/_navbar.html -->
+    {% include '/partials/_navbar.html' %}
+    <!-- partial -->
+    <div class="page-wrapper mdc-toolbar-fixed-adjust">
+        <main class="content-wrapper">
+            <div class="mdc-layout-grid">
+                <div class="mdc-layout-grid__inner">
+
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6 stretch-card">
+                        <div class="mdc-card">
+                            <section class="mdc-card__supporting-text">
+
+                                <h1 class="mdc-typography--headline">角色信息</h1>
+                                <p class="bold-text">角色名：{{role.name}}</p>
+                                <p class="bold-text">角色经验：{{role.exp}}</p>
+                                <p class="bold-text">角色等级：{{role.lv}}</p>
+                                <p class="bold-text">角色性别：{{role.sex}}</p>
+                                <p class="bold-text">角色战力：{{role.power}}</p>
+
+                                <p class="mdc-theme--primary text">固定信息</p>
+                                <p class="bold-text">角色职业：{{role.job}}</p>
+                                <p class="bold-text">角色创建时间：{{role.created_datetime}}</p>
+                                <p class="bold-text">角色服务器：{{role.server_part}}</p>
+
+                                <h1 class="mdc-typography--display2"><a href="/user/role_change">更改角色信息</a></h1>
+
+                            </section>
+                        </div>
+                    </div>
+
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6 stretch-card">
+                        <div class="mdc-card">
+                            <section class="mdc-card__supporting-text">
+
+                                <h1 class="mdc-typography--headline">账号信息</h1>
+                                <!--<p class="bold-text">账户名：{{user.account_name}}</p>-->
+                                <p class="bold-text">账号：{{uid}}</p>
+                                <p class="bold-text">密码：{{user.passwd}}</p>
+                                <p class="bold-text">ip：{{user.ip}}</p>
+                                <p class="bold-text">注册时间：{{user.register_datetime}}</p>
+                                <p class="bold-text">角色状态：{{user.status}}</p>
+
+                                <h1 class="mdc-typography--display2"><a href="/user/user_change">更改密码</a></h1>
+
+                            </section>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>
+
+
+<!-- body wrapper -->
+<!-- plugins:js -->
+<script src="../../../static/main/node_modules/material-components-web/dist/material-components-web.min.js"></script>
+<script src="../../../static/main/node_modules/jquery/dist/jquery.min.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="../../../static/main/node_modules/chart.js/dist/Chart.min.js"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="../../../static/main/js/misc.js"></script>
+<script src="../../../static/main/js/material.js"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="../../../static/main/js/chart.js"></script>
+<!-- End custom js for this page-->
+</body>
+
+</html>
+

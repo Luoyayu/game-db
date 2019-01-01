@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>user_change</title>
+    <!-- 引用css -->
+    <link rel="stylesheet" href="/static/main/node_modules/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/main/css/style.css">
+
+    <link rel="stylesheet" href="/static/mypage/css/pokemon.css">
+    <!-- end 引用css -->
+    <link rel="shortcut icon" href="/static/main/images/favicon.png"/>
+</head>
+
+<body>
+<div class="body-wrapper">
+    <!-- partial:../../partials/_sidebar.html -->
+    {% include '/partials/_sidebar.html' %}
+    <!-- partial -->
+    <!-- partial:../../partials/_navbar.html -->
+    {% include '/partials/_navbar.html' %}
+    <!-- partial -->
+    <div class="page-wrapper mdc-toolbar-fixed-adjust">
+        <main class="content-wrapper">
+            <div class="mdc-layout-grid">
+                <div class="mdc-layout-grid__inner">
+
+
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6 stretch-card">
+                        <div class="mdc-card">
+                            <section class="mdc-card__supporting-text">
+
+                                <form action="/user/user_change_over" method="post">
+                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4-desktop">
+                                        <div class="template-demo">
+                                            <div id="demo-tf-box-wrapper">
+                                                <div id="tf-box-example"
+                                                     class="mdc-text-field mdc-text-field--box w-100">
+                                                    <input name="passwd" required pattern=".{6,}" type="text"
+                                                           id="tf-box" class="mdc-text-field__input"
+                                                           aria-controls="name-validation-message">
+                                                    <label for="tf-box" class="mdc-text-field__label">PASSWORD</label>
+                                                    <div class="mdc-text-field__bottom-line"></div>
+                                                </div>
+                                                <p class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
+                                                   id="name-validation-msg">
+                                                    Must be at least 6 characters
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="mdc-button mdc-button--raised w-100"
+                                            data-mdc-auto-init="MDCRipple">
+                                        提交
+                                    </button>
+                                </form>
+
+                            </section>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>
+
+
+<!-- body wrapper -->
+<!-- plugins:js -->
+<script src="../../../static/main/node_modules/material-components-web/dist/material-components-web.min.js"></script>
+<script src="../../../static/main/node_modules/jquery/dist/jquery.min.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="../../../static/main/node_modules/chart.js/dist/Chart.min.js"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="../../../static/main/js/misc.js"></script>
+<script src="../../../static/main/js/material.js"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="../../../static/main/js/chart.js"></script>
+<!-- End custom js for this page-->
+</body>
+
+</html>
+

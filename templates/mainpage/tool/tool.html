@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>tool</title>
+    <!-- 引用css -->
+    <link rel="stylesheet" href="/static/main/node_modules/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/main/css/style.css">
+
+    <link rel="stylesheet" href="/static/mypage/css/pokemon.css">
+    <!-- end 引用css -->
+    <link rel="shortcut icon" href="/static/main/images/favicon.png"/>
+</head>
+
+<body>
+<div class="body-wrapper">
+    <!-- partial:../../partials/_sidebar.html -->
+    {% include '/partials/_sidebar.html' %}
+    <!-- partial -->
+    <!-- partial:../../partials/_navbar.html -->
+    {% include '/partials/_navbar.html' %}
+    <!-- partial -->
+    <div class="page-wrapper mdc-toolbar-fixed-adjust">
+        <main class="content-wrapper">
+            <div class="mdc-layout-grid">
+                <div class="mdc-layout-grid__inner">
+
+                    <!--小血瓶-->
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                        <div class="mdc-card">
+                            <section class="mdc-card__primary">
+                                <h3 class="mdc-card__title mdc-card__title--large">【小血瓶】</h3>
+                            </section>
+                            <section class="mdc-layout-grid-fixed-column-width">
+                                <div class="pokemon_left">
+                                    <img height="180" width="240" src="\static\mypage\image\red0.jpeg">
+                                </div>
+                                <div class="pokemon_right">
+                                    <p>效果：【小血瓶】能回复50HP</p>
+                                    <h1>数量:{{tool.red0_num}}</h1>
+                                </div>
+                            </section>
+                        </div>
+                        <a href="/main/tool_buy1">
+                            <button type="button" class="mdc-button mdc-button--raised w-100"
+                                    data-mdc-auto-init="MDCRipple">
+                                购买
+                            </button>
+                        </a>
+                    </div>
+                    <!--中血瓶-->
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                        <div class="mdc-card">
+                            <section class="mdc-card__primary">
+                                <h3 class="mdc-card__title mdc-card__title--large">【中血瓶】</h3>
+                            </section>
+                            <section class="mdc-layout-grid-fixed-column-width">
+                                <div class="pokemon_left">
+                                    <img height="180" width="240" src="\static\mypage\image\red1.jpeg">
+                                </div>
+                                <div class="pokemon_right">
+                                    <p>效果：【中血瓶】能回复100HP</p>
+                                    <h1>数量:{{tool.red1_num}}</h1>
+                                </div>
+                            </section>
+                        </div>
+                        <a href="/main/tool_buy2">
+                            <button type="button" class="mdc-button mdc-button--raised w-100"
+                                    data-mdc-auto-init="MDCRipple">
+                                购买
+                            </button>
+                        </a>
+                    </div>
+                    <!--小蓝瓶-->
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                        <div class="mdc-card">
+                            <section class="mdc-card__primary">
+                                <h3 class="mdc-card__title mdc-card__title--large">【小蓝瓶】</h3>
+                            </section>
+                            <section class="mdc-layout-grid-fixed-column-width">
+                                <div class="pokemon_left">
+                                    <img height="180" width="240" src="\static\mypage\image\blue.jpeg">
+                                </div>
+                                <div class="pokemon_right">
+                                    <p>效果：【小蓝瓶】能回复100MP</p>
+                                    <h1>数量:{{tool.blue_num}}</h1>
+                                </div>
+                            </section>
+                        </div>
+                        <a href="/main/tool_buy3">
+                            <button type="button" class="mdc-button mdc-button--raised w-100"
+                                    data-mdc-auto-init="MDCRipple">
+                                购买
+                            </button>
+                        </a>
+                    </div>
+                    <!--精灵球-->
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                        <div class="mdc-card">
+                            <section class="mdc-card__primary">
+                                <h3 class="mdc-card__title mdc-card__title--large">【精灵球】</h3>
+                            </section>
+                            <section class="mdc-layout-grid-fixed-column-width">
+                                <div class="pokemon_left">
+                                    <img height="180" width="240" src="\static\mypage\image\W.jpeg">
+                                </div>
+                                <div class="pokemon_right">
+                                    <p>效果：【精灵球】有概率捕获神奇宝贝</p>
+                                    <h1>数量:{{tool.W_num}}</h1>
+                                </div>
+                            </section>
+                        </div>
+                        <a href="/main/tool_buy4">
+                            <button type="button" class="mdc-button mdc-button--raised w-100"
+                                    data-mdc-auto-init="MDCRipple">
+                                购买
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>
+
+
+<!-- body wrapper -->
+<!-- plugins:js -->
+<script src="../../../static/main/node_modules/material-components-web/dist/material-components-web.min.js"></script>
+<script src="../../../static/main/node_modules/jquery/dist/jquery.min.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="../../../static/main/node_modules/chart.js/dist/Chart.min.js"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="../../../static/main/js/misc.js"></script>
+<script src="../../../static/main/js/material.js"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="../../../static/main/js/chart.js"></script>
+<!-- End custom js for this page-->
+</body>
+
+</html>
+

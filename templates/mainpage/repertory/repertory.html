@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>repertory</title>
+    <!-- 引用css -->
+    <link rel="stylesheet" href="/static/main/node_modules/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/main/css/style.css">
+    <!-- end 引用css -->
+    <link rel="shortcut icon" href="/static/main/images/favicon.png"/>
+</head>
+
+<body>
+<div class="body-wrapper">
+    <!-- partial:../../partials/_sidebar.html -->
+    {% include '/partials/_sidebar.html' %}
+    <!-- partial -->
+    <!-- partial:../../partials/_navbar.html -->
+    {% include '/partials/_navbar.html' %}
+    <!-- partial -->
+    <div class="page-wrapper mdc-toolbar-fixed-adjust">
+        <main class="content-wrapper">
+            <div class="mdc-layout-grid">
+			        <!--搜索结果-->
+           	        <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+					  <div class="mdc-card table-responsive">
+						<div class="table-heading px-2 px-1 border-bottom">
+						  <h1 class="mdc-card__title mdc-card__title--large">图鉴搜索</h1>
+						</div>
+						<table class="table">
+						  <thead>
+							<tr>
+							    <th class="text-left">宝可梦</th>
+							    <th>HP</th>
+                                <th>level</th>
+							    <th>攻击</th>
+							    <th>防御</th>
+							    <th>特攻</th>
+							    <th>特防</th>
+							    <th>速度</th>
+								<th>上场</th>
+							    <th>图鉴信息</th>
+							</tr>
+						  </thead>
+						  <tbody>
+
+						  {% for pokemon in pokemons %}
+							<tr>
+							  <td class="text-left">{{pokemon.name}}</td>
+                                <td>{{pokemon.hp}}</td>
+                                <td>{{pokemon.lv}}</td>
+                                <td>{{pokemon.atk}}</td>
+							    <td>{{pokemon.def}}</td>
+							    <td>{{pokemon.spatk}}</td>
+							    <td>{{pokemon.spdef}}</td>
+							    <td>{{pokemon.speed}}</td>
+								<td><a href="/main/pokemon_change_up{{pokemon.key}}"><div class="col mdc-button" data-mdc-auto-init="MDCRipple"><i class="mdi mdi-forum text-yellow"></i></div></a></td>
+								<td><a href="/main/repertory_{{pokemon.key}}"><div class="col mdc-button" data-mdc-auto-init="MDCRipple"><i class="mdi mdi-forum text-yellow"></i></div></a></td>
+							</tr>
+						  {% endfor %}
+
+						  </tbody>
+					  </table>
+				  	</div>
+      			  </div>
+                </div>
+        </main>
+
+    </div>
+</div>
+
+
+<!-- body wrapper -->
+<!-- plugins:js -->
+<script src="../../../static/main/node_modules/material-components-web/dist/material-components-web.min.js"></script>
+<script src="../../../static/main/node_modules/jquery/dist/jquery.min.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="../../../static/main/node_modules/chart.js/dist/Chart.min.js"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="../../../static/main/js/misc.js"></script>
+<script src="../../../static/main/js/material.js"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="../../../static/main/js/chart.js"></script>
+<!-- End custom js for this page-->
+</body>
+
+</html>

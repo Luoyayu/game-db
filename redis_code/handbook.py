@@ -1,6 +1,6 @@
-import gameflask.code.redishelp
-from gameflask.code.redishelp import *
-from gameflask.code.crawler import Craw_pokemon, Craw_move
+import gameflask.redis_code.redishelp
+from gameflask.redis_code.redishelp import *
+from gameflask.redis_code.crawler import Craw_pokemon, Craw_move
 
 r0 = redis.Redis(host=host, port=port, db=0, password=RedisPasswd)  # user redis db0
 
@@ -78,7 +78,7 @@ class handbook:
                 self.storage_move()
 
     def load_pokemon(self, pokemon_id):
-        pokemon_info = get_redisHM_items_as_dict('handbook_pokemon', pokemon_id, db=0)
+        pokemon_info = get_redisHM_entry_as_dict('handbook_pokemon', pokemon_id, db=0)
         if pokemon_info is None:
             return "WRONG_POKEMON_ID"
         for key in pokemon_info.keys():
@@ -127,7 +127,7 @@ class handbook:
         r0.save()
 
     def del_pokemon_by_id(self, pokemon_id):
-        pokemon_info = get_redisHM_items_as_dict("handbook_pokemon", pokemon_id, db=0)
+        pokemon_info = get_redisHM_entry_as_dict("handbook_pokemon", pokemon_id, db=0)
         if pokemon_info is None: return "WRONG_POKEMON_ID"
         r0.hdel("handbook_pokemon", pokemon_id)
         r0.hdel("handbook_pokemon_name_id", pokemon_info['name'])
@@ -155,7 +155,7 @@ class handbook:
             print("WRONG_MOVE_NAME", move_name)
 
     def load_move(self, move_id):
-        move_info = get_redisHM_items_as_dict("handbook_move", move_id, db=0)
+        move_info = get_redisHM_entry_as_dict("handbook_move", move_id, db=0)
         if move_info is None: return "WRONG_MOVE_ID"
 
         for key in move_info.keys():
@@ -188,7 +188,7 @@ class handbook:
         r0.save()
 
     def del_move_by_id(self, move_id):
-        move_info = get_redisHM_items_as_dict("handbook_move", move_id, db=0)
+        move_info = get_redisHM_entry_as_dict("handbook_move", move_id, db=0)
         if move_info is None: return "WRONG_MOVE_ID"
         r0.hdel("handbook_move_name_id", move_info['name'])
         r0.hdel('handbook_move', move_id)
@@ -205,7 +205,7 @@ class handbook:
         return 0
 
     def load_equipment(self, eid):
-        equipment_info = get_redisHM_items_as_dict("handbook_equipment", eid, db=0)
+        equipment_info = get_redisHM_entry_as_dict("handbook_equipment", eid, db=0)
         if equipment_info is None: return "WRONG_EID"
         for key in equipment_info.keys():
             self.equipment[key] = equipment_info[key]
@@ -247,7 +247,7 @@ class handbook:
         r0.save()
 
     def del_equipment_by_id(self, eid):
-        equipment_info = get_redisHM_items_as_dict("handbook_equipment", eid, db=0)
+        equipment_info = get_redisHM_entry_as_dict("handbook_equipment", eid, db=0)
         if equipment_info is None: return "WRONG_EQUIPMENT_ID"
         r0.hdel("handbook_equipment", eid)
         r0.hdel("handbook_equipment_name_id", equipment_info['name'])

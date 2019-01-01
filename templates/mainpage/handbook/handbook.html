@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Material Admin</title>
+    <title>handbook</title>
     <!-- 引用css -->
     <link rel="stylesheet" href="/static/main/node_modules/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="/static/main/css/style.css">
@@ -19,70 +19,276 @@
     {% include '/partials/_sidebar.html' %}
     <!-- partial -->
     <!-- partial:../../partials/_navbar.html -->
-    {% include '/partials/_navbar_search.html' %}
+    {% include '/partials/_navbar.html' %}
     <!-- partial -->
     <div class="page-wrapper mdc-toolbar-fixed-adjust">
         <main class="content-wrapper">
             <div class="mdc-layout-grid">
                 <div class="mdc-layout-grid__inner">
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
+                    <!--搜索条件-->
+                    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+                        <!--按名查找-->
                         <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Line chart</h1>
-                            </section>
                             <section class="mdc-card__supporting-text">
-                                <canvas id="lineChart" style="height:250px"></canvas>
+                                <form action="/main/search_by_name" method="post">
+                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4-desktop">
+                                        <div class="template-demo">
+                                            <div id="demo-tf-box-wrapper">
+                                                <div id="tf-box-example"
+                                                     class="mdc-text-field mdc-text-field--box w-100">
+                                                    <input name="pokemon_name" required pattern=".{2,}" type="text"
+                                                           id="tf-box" class="mdc-text-field__input"
+                                                           aria-controls="name-validation-message">
+                                                    <label for="tf-box" class="mdc-text-field__label">宝可梦名字</label>
+                                                    <div class="mdc-text-field__bottom-line"></div>
+                                                </div>
+                                                <p class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
+                                                   id="name-validation-msg">
+                                                    Must be at least 2 characters
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="mdc-button mdc-button--raised w-100"
+                                            data-mdc-auto-init="MDCRipple">
+                                        按名查找
+                                    </button>
+                                </form>
+
+                            </section>
+                        </div>
+
+                        <!--按属性查找-->
+                        <div class="mdc-card">
+                            <section class="mdc-card__supporting-text">
+                                <form action="/main/search_by_type" method="post">
+                                    <div class="template-demo">
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="all" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio1" checked name="ex0-default">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio1-label" for="ex0-default-radio1">全部</label>
+                                        </div>
+
+                                        <!--世代显示-->
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="Electric" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio2">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio2-label"
+                                                   for="ex0-default-radio2">Electric</label>
+                                        </div>
+
+                                        <div class="mdc-form-field">
+                                            <div name="type" value="Grass" class="mdc-radio"
+                                                 data-mdc-auto-init="MDCRipple">
+                                                <input class="mdc-radio__native-control" type="radio"
+                                                       id="ex0-default-radio3" name="ex0-default">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio3-label" for="ex0-default-radio2">Grass</label>
+                                        </div>
+
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="Psychic" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio4">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio4-label"
+                                                   for="ex0-default-radio2">Psychic</label>
+                                        </div>
+
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="Water" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio5">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio5-label" for="ex0-default-radio2">Water</label>
+                                        </div>
+
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="Ghost" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio6">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio6-label" for="ex0-default-radio2">Ghost</label>
+                                        </div>
+
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="Bug" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio7">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio7-label" for="ex0-default-radio2">Bug</label>
+                                        </div>
+
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="Steel" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio8">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio8-label" for="ex0-default-radio2">Steel</label>
+                                        </div>
+
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="Flying" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio9">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio9-label" for="ex0-default-radio2">Flying</label>
+                                        </div>
+
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="Ice" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio10">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio10-label" for="ex0-default-radio2">Ice</label>
+                                        </div>
+
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="Fighting" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio11">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio11-label"
+                                                   for="ex0-default-radio2">Fighting</label>
+                                        </div>
+
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio" data-mdc-auto-init="MDCRipple">
+                                                <input name="type" value="Normal" class="mdc-radio__native-control"
+                                                       type="radio" id="ex0-default-radio12">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label id="ex0-default-radio12-label"
+                                                   for="ex0-default-radio2">Normal</label>
+                                        </div>
+
+                                        <!--<div class="mdc-form-field">-->
+                                        <!--<div class="mdc-radio" data-mdc-auto-init="MDCRipple">-->
+                                        <!--<input class="mdc-radio__native-control" type="radio" id="ex0-default-radio13" name="ex0-default">-->
+                                        <!--<div class="mdc-radio__background">-->
+                                        <!--<div class="mdc-radio__outer-circle"></div>-->
+                                        <!--<div class="mdc-radio__inner-circle"></div>-->
+                                        <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<label id="ex0-default-radio13-label" for="ex0-default-radio2">Ground</label>-->
+                                        <!--</div>-->
+
+                                        <!--<div class="mdc-form-field">-->
+                                        <!--<div class="mdc-radio" data-mdc-auto-init="MDCRipple">-->
+                                        <!--<input class="mdc-radio__native-control" type="radio" id="ex0-default-radio14" name="ex0-default">-->
+                                        <!--<div class="mdc-radio__background">-->
+                                        <!--<div class="mdc-radio__outer-circle"></div>-->
+                                        <!--<div class="mdc-radio__inner-circle"></div>-->
+                                        <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<label id="ex0-default-radio14-label" for="ex0-default-radio2">Fairy</label>-->
+                                        <!--</div>-->
+                                        <!--Fairy Rock Fire-->
+                                    </div>
+
+                                    <!--提交按钮-->
+                                    <button type="submit" class="mdc-button mdc-button--raised w-100"
+                                            data-mdc-auto-init="MDCRipple">
+                                        按类型查找
+                                    </button>
+                                </form>
                             </section>
                         </div>
                     </div>
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                        <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Bar chart</h1>
-                            </section>
-                            <section class="mdc-card__supporting-text">
-                                <canvas id="barChart" style="height:230px"></canvas>
-                            </section>
-                        </div>
-                    </div>
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                        <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Area chart</h1>
-                            </section>
-                            <section class="mdc-card__supporting-text">
-                                <canvas id="areaChart" style="height:250px"></canvas>
-                            </section>
-                        </div>
-                    </div>
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                        <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Doughnut chart</h1>
-                            </section>
-                            <section class="mdc-card__supporting-text">
-                                <canvas id="doughnutChart" style="height:250px"></canvas>
-                            </section>
-                        </div>
-                    </div>
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                        <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Pie chart</h1>
-                            </section>
-                            <section class="mdc-card__supporting-text">
-                                <canvas id="pieChart" style="height:250px"></canvas>
-                            </section>
-                        </div>
-                    </div>
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                        <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Scatter chart</h1>
-                            </section>
-                            <section class="mdc-card__supporting-text">
-                                <canvas id="scatterChart" style="height:250px"></canvas>
-                            </section>
+
+                    <!--搜索结果-->
+                    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+                        <div class="mdc-card table-responsive">
+                            <div class="table-heading px-2 px-1 border-bottom">
+                                <h1 class="mdc-card__title mdc-card__title--large">图鉴搜索</h1>
+                            </div>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-left">宝可梦</th>
+                                    <th>HP</th>
+                                    <th>攻击</th>
+                                    <th>防御</th>
+                                    <th>特攻</th>
+                                    <th>特防</th>
+                                    <th>速度</th>
+                                    <!--<th>总计</th>-->
+                                    <th>图鉴信息</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for pokemon in pokemons %}
+                                <tr>
+                                    <td class="text-left">{{pokemon.name}}</td>
+                                    <td>{{pokemon.hp}}</td>
+                                    <td>{{pokemon.atk}}</td>
+                                    <td>{{pokemon.def}}</td>
+                                    <td>{{pokemon.spatk}}</td>
+                                    <td>{{pokemon.spdef}}</td>
+                                    <td>{{pokemon.speed}}</td>
+                                    <!--<td>{{pokemon.total}}</td>-->
+                                    <td><a href="/main/handbook_{{pokemon.key}}">
+                                        <div class="col mdc-button" data-mdc-auto-init="MDCRipple"><i
+                                                class="mdi mdi-forum text-yellow"></i></div>
+                                    </a></td>
+                                </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

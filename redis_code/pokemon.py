@@ -1,6 +1,6 @@
-from gameflask.code.redishelp import *
-from gameflask.code.handbook import handbook
-from gameflask.code.backpack import Backpack
+from gameflask.redis_code.redishelp import *
+from gameflask.redis_code.handbook import handbook
+from gameflask.redis_code.backpack import Backpack
 
 r1 = redis.Redis(host=host, port=port, db=0, password=RedisPasswd)  # user redis db1
 
@@ -50,7 +50,7 @@ class Pokemon:
         :return:
         """
         # if rid not exit “打印错误”
-        from gameflask.code.handbook import handbook
+        from gameflask.redis_code.handbook import handbook
         self.pokemon_id = r1.incr('pokemon_idx')
         hd = handbook()
         hd.load_pokemon(pokemon_id)
@@ -59,7 +59,7 @@ class Pokemon:
         self.pokemon_info['lv'] = 0
         self.pokemon_info['maxhp'] = self.pokemon_info['hp']
         self.pokemon_info['exp'] = self.pokemon_info['base_exp']
-        role_info = get_redisHM_items_as_dict('role', rid, db=0)
+        role_info = get_redisHM_entry_as_dict('role', rid, db=0)
         if role_info is None: return "WRONG_RID"
         role_info['pokemons'].append(self.pokemon_id)
         wrt_dict_into_redisHM('role', rid, role_info, db=0)
@@ -77,7 +77,7 @@ class Pokemon:
                 return "NO_POKEMON_ID"
         else:
             self.pokemon_id = pokemon_id
-        pokemon_info = get_redisHM_items_as_dict('pokemon', pokemon_id, db=0)
+        pokemon_info = get_redisHM_entry_as_dict('pokemon', pokemon_id, db=0)
         if pokemon_info is None:
             return "WRONG_POKEMON_ID"
         for key in pokemon_info:
@@ -104,7 +104,7 @@ class Pokemon:
         if delete_redisHM_items('pokemon', self.pokemon_id, db=0):
             return "WRONG_POKEMON_ID"
 
-        role_info = get_redisHM_items_as_dict('role', rid, db=0)
+        role_info = get_redisHM_entry_as_dict('role', rid, db=0)
         if role_info is None: return "WRONG_RID"
 
         try:
@@ -114,9 +114,16 @@ class Pokemon:
 
         return wrt_dict_into_redisHM('role', rid, role_info, db=0)
 
-    def equip(self, eid):
+    def equip(self, bp_id, eid):
         self.pokemon_info['equipment'].append(eid)
-        return self.storage()
+        bp = Backpack()
+        bp.load(bp_id)
+        for eq in bp.backpack['equipment_lst']:
+            if eid == eq[0] and eq[1] == -1:
+                eq[1] = self.pokemon_id
+                bp.storage()
+                return self.storage()
+        return "THE_EID_CANNOT_BE_EQUIPPED"
 
     def unequip(self, bp_id, eid):
         if eid in self.pokemon_info['equipment']:
@@ -194,7 +201,7 @@ def test_create_pokemon(id):
     assert flag == 0
     cprint("create_pokemon: " + str(flag), 'red')
     dprint(pokemon1.pokemon_info)
-    from gameflask.code.role import Role
+    from gameflask.redis_code.role import Role
     role1 = Role()
     role1.load(rid=1)
     dprint(role1.role_info)
@@ -205,7 +212,7 @@ def test_delete(id1, id2):
     # pokemon1.rid = 1
     flag = pokemon1.delete(rid=id1, pokemon_id=id2)
     cprint(str(flag))
-    from gameflask.code.role import Role
+    from gameflask.redis_code.role import Role
     role1 = Role()
     role1.load(rid=1)
     dprint(role1.role_info)

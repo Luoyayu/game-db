@@ -1,4 +1,4 @@
-from gameflask.code.redishelp import *
+from gameflask.redis_code.redishelp import *
 
 r0 = redis.Redis(host=host, port=port, db=0, password=RedisPasswd)  # user redis db
 
@@ -27,7 +27,7 @@ class Backpack:
         if self.bp_id is None: self.bp_id = bp_id
         if self.bp_id is None: return "WRONG_bp_id"
 
-        backpack_info = get_redisHM_items_as_dict("backpack", bp_id, db=0)
+        backpack_info = get_redisHM_entry_as_dict("backpack", bp_id, db=0)
         if backpack_info is None: return "WRONG_bp_id"
         for key in backpack_info.keys():
             self.backpack[key] = backpack_info[key]
@@ -116,7 +116,7 @@ def test_equipment():
     r0.delete("backpack_idx")
     r0.delete("backpack")
     bp = Backpack()
-    from gameflask.code.handbook import handbook
+    from gameflask.redis_code.handbook import handbook
     hd = handbook()
     bp_id = bp.create_backpack()
     print('backpack id is', bp_id)

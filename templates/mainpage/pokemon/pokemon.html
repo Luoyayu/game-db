@@ -5,10 +5,12 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Material Admin</title>
+    <title>pokemon</title>
     <!-- 引用css -->
     <link rel="stylesheet" href="/static/main/node_modules/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="/static/main/css/style.css">
+
+    <link rel="stylesheet" href="/static/mypage/css/pokemon.css">
     <!-- end 引用css -->
     <link rel="shortcut icon" href="/static/main/images/favicon.png"/>
 </head>
@@ -19,80 +21,47 @@
     {% include '/partials/_sidebar.html' %}
     <!-- partial -->
     <!-- partial:../../partials/_navbar.html -->
-    {% include '/partials/_navbar_search.html' %}
+    {% include '/partials/_navbar.html' %}
     <!-- partial -->
     <div class="page-wrapper mdc-toolbar-fixed-adjust">
         <main class="content-wrapper">
             <div class="mdc-layout-grid">
                 <div class="mdc-layout-grid__inner">
+
                     <!--pokemon1-->
+                    {% for pokemon in pokemons %}
                     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
                         <div class="mdc-card">
                             <section class="mdc-card__primary">
                                 <a href="">
-                                    <h3>杰尼龟</h3>
+                                    <h3 class="mdc-card__title mdc-card__title--large">{{pokemon.name}}</h3>
                                 </a>
                             </section>
-                            <section class="mdc-card__supporting-text">
-                                <div>
-                                    <img></img>
+                            <section class="mdc-layout-grid-fixed-column-width">
+                                <div class="pokemon_left">
+                                    <img height="240px" width="180px" src={{pokemon.url}}>
+                                </div>
+                                <div class="pokemon_right">
+                                    <p>总血量:{{pokemon.hp}}</p>
+                                    <p>等级:{{pokemon.lv}}</p>
+                                    <p>攻击:{{pokemon.atk}}</p>
+                                    <p>防御:{{pokemon.def}}</p>
+                                    <p>特攻:{{pokemon.spatk}}</p>
+                                    <p>特防:{{pokemon.spdef}}</p>
+                                    <p>速度:{{pokemon.speed}}</p>
+                                    <!--<p>特性:{{pokemon.s}}</p>-->
                                 </div>
                             </section>
                         </div>
+                        <a href="/main/pokemon_change_down{{pokemon.id}}">
+                            <button type="button" class="mdc-button mdc-button--raised w-100"
+                                    data-mdc-auto-init="MDCRipple">
+                                下场
+                            </button>
+                        </a>
                     </div>
-                    <!--pokemon2-->
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                        <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Bar chart</h1>
-                            </section>
-                            <section class="mdc-card__supporting-text">
-                                <canvas id="barChart" style="height:230px"></canvas>
-                            </section>
-                        </div>
-                    </div>
-                    <!--pokemon2-->
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                        <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Area chart</h1>
-                            </section>
-                            <section class="mdc-card__supporting-text">
-                                <canvas id="areaChart" style="height:250px"></canvas>
-                            </section>
-                        </div>
-                    </div>
-                    <!--pokemon3-->
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                        <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Doughnut chart</h1>
-                            </section>
-                            <section class="mdc-card__supporting-text">
-                                <canvas id="doughnutChart" style="height:250px"></canvas>
-                            </section>
-                        </div>
-                    </div>
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                        <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Pie chart</h1>
-                            </section>
-                            <section class="mdc-card__supporting-text">
-                                <canvas id="pieChart" style="height:250px"></canvas>
-                            </section>
-                        </div>
-                    </div>
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                        <div class="mdc-card">
-                            <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title mdc-card__title--large">Scatter chart</h1>
-                            </section>
-                            <section class="mdc-card__supporting-text">
-                                <canvas id="scatterChart" style="height:250px"></canvas>
-                            </section>
-                        </div>
-                    </div>
+                    {% endfor %}
+
                 </div>
             </div>
         </main>

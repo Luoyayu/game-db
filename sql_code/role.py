@@ -1,6 +1,6 @@
-from gameflask.code.redishelp import *
+from gameflask.sql_code.mysqlhelp import *
 
-r0 = redis.Redis(host=host, port=port, db=0, password=RedisPasswd)  # user redis db
+r0 = r()
 
 
 class Role:
@@ -14,9 +14,10 @@ class Role:
             'job': None,
             'server_part': None,
             'power': None,
-            'backpack_id': None,  # 拥有的背包ID
-            'pokemons': [],  # 拥有的宝可梦ID列表
-            'present': [],  # 表示战斗时上场的pokemon，最多为6个
+            'backpack_id': None,  # 外键
+            'user_id': None,  # 外键
+            # 'pokemons': [],  # 拥有的宝可梦ID列表
+            # 'present': [],  # 表示战斗时上场的pokemon，最多为6个
             'money': None
         }
         self.uid = None  # 账号ID
@@ -52,7 +53,7 @@ class Role:
         self.role_info['backpack_id'] = r0.incr('backpack_idx')
         self.role_info['money'] = 1000
 
-        user_info = get_redisHM_items_as_dict('user', uid, db=0)
+        user_info = get_redisHM_entry_as_dict('user', uid, db=0)
         user_info['role_id_list'].append(self.rid)
         wrt_dict_into_redisHM('user', uid, user_info, db=0)
 
@@ -73,7 +74,7 @@ class Role:
                 return "NO_RID"
         else:
             self.rid = rid
-        role_info = get_redisHM_items_as_dict('role', rid, db=0)
+        role_info = get_redisHM_entry_as_dict('role', rid, db=0)
         if role_info is None:
             return "WRONG_RID"
         for key in role_info.keys():
@@ -101,7 +102,7 @@ class Role:
         if delete_redisHM_items('role', self.rid, db=0):
             return "WRONG_RID"
 
-        user_info = get_redisHM_items_as_dict('user', self.uid, db=0)
+        user_info = get_redisHM_entry_as_dict('user', self.uid, db=0)
         if user_info is None: return "WRONG_USER_ID"
         try:
             user_info['role_id_list'].remove(self.rid)
@@ -142,45 +143,3 @@ class Role:
             return wrt_dict_into_redisHM('role', self.rid, self.role_info, db=0)
         else:
             return "WRONG_RID"
-
-
-def test_create_role():
-    r0.delete('role')  # just for test, in a new hm
-    r0.delete("role_id")
-    r0.delete("backpack_id")
-
-    role1 = Role()
-
-    flag = role1.create_role(
-        uid=1,
-        role_name='小智',
-        sex='男',
-        job='战士',
-        server_part='华中'
-    )
-    assert flag == 0
-    cprint("create_role: " + str(flag), 'red')
-    dprint(role1.role_info)
-    from gameflask.code.user import GeneralUser
-    user1 = GeneralUser()
-    user1.load(uid=1)
-    dprint(user1.user_info)
-
-
-def test_delete():
-    role1 = Role()
-    role1.uid = 1
-    flag = role1.delete(rid=1)
-    cprint(str(flag))
-    from gameflask.code.user import GeneralUser
-    user1 = GeneralUser()
-    user1.load(uid=1)
-    dprint(user1.user_info)
-
-
-def main():
-    pass
-
-
-if __name__ == "__main__":
-    test_create_role()

@@ -1,0 +1,16 @@
+@charset "UTF-8";
+/* CSS Document */
+
+.pokemon_left {
+    width: 50%;
+    height: 100%;
+    float: left;
+}
+
+.pokemon_right {
+    width: 50%;
+    height: 100%;
+    float: right;
+}
+
+
